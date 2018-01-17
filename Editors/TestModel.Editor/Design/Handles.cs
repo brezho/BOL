@@ -110,7 +110,7 @@ namespace TestModel.Editor.Design
                         break;
 
                     case HandlePositions.BottomLeft:
-                        _linkedControl.SetBounds(originalControlBounds.X + deltaX, originalControlBounds.Y, originalControlBounds.Width - deltaX +1, originalControlBounds.Height + deltaY);
+                        _linkedControl.SetBounds(originalControlBounds.X + deltaX, originalControlBounds.Y, originalControlBounds.Width - deltaX -1, originalControlBounds.Height + deltaY +1);
                         break;
 
                         //case HandlePositions.MiddleLeft:

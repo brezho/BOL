@@ -135,7 +135,6 @@
     <Compile Include="Class1.cs" />
     <Compile Include="Controls\NullControl.cs" />
     <Compile Include="Controls\Oscilloscope.cs" />
-    <Compile Include="Design\GrabHandles.cs" />
     <Compile Include="Design\Handles.cs" />
     <Compile Include="Design\MoverControl.cs" />
     <Compile Include="IPublisher.cs" />

@@ -87,54 +87,63 @@ namespace TestModel.Editor.Design
             }
             else
             {
-                //      editorContainer.Shell.TraceLine("Resizing from " + LastKnownHandle.ToString());
+                HandlesRectangles = null;
+                var deltaX = e.Location.X - mouseStartLocation.X;
+                var deltaY = e.Location.Y - mouseStartLocation.Y;
 
-                var newHeight = originalSize.Height + e.Location.Y - originalLocation.Y;
-                var newWidth = originalSize.Width + e.Location.X - originalLocation.X;
 
+
+
+                editorContainer.Shell.TraceLine("Delta " + new Point(deltaX, deltaY));
                 switch (LastKnownHandle)
                 {
                     case HandlePositions.BottomRight:
-                        _linkedControl.Height = newHeight;
-                        _linkedControl.Width = newWidth;
+                        _linkedControl.Size = new Size(originalControlBounds.Width + deltaX, originalControlBounds.Height + deltaY);
                         break;
+
                     case HandlePositions.MiddleRight:
-                        Cursor = Cursors.SizeWE;
+                        _linkedControl.Width = originalControlBounds.Width + deltaX;
                         break;
-                    case HandlePositions.TopRight:
-                        Cursor = Cursors.SizeNESW;
-                        break;
-                    case HandlePositions.BottomLeft:
-                        Cursor = Cursors.SizeNESW;
-                        break;
-                    case HandlePositions.MiddleLeft:
-                        Cursor = Cursors.SizeWE;
-                        break;
-                    case HandlePositions.TopLeft:
-                        Cursor = Cursors.SizeNWSE;
-                        break;
+
                     case HandlePositions.BottomMiddle:
-                        Cursor = Cursors.SizeNS;
+                        _linkedControl.Height = originalControlBounds.Height + deltaY;
                         break;
-                    case HandlePositions.TopMiddle:
-                        Cursor = Cursors.SizeNS;
+
+                    case HandlePositions.BottomLeft:
+                        _linkedControl.SetBounds(originalControlBounds.X + deltaX, originalControlBounds.Y, originalControlBounds.Width - deltaX +1, originalControlBounds.Height + deltaY);
                         break;
+
+                        //case HandlePositions.MiddleLeft:
+                        //    _linkedControl.SetBounds(newX, originalControlBounds.Y, newWidth, originalControlBounds.Height);
+                        //    break;
+
+                        //case HandlePositions.TopRight:
+                        //    _linkedControl.SetBounds(originalControlBounds.X, newY, newWidth, newHeight);
+                        //    break;
+
+                        //case HandlePositions.TopLeft:
+                        //    _linkedControl.SetBounds(newX, newY, newWidth, newHeight);
+                        //    break;
+
+                        //case HandlePositions.TopMiddle:
+                        //    _linkedControl.SetBounds(originalControlBounds.X, newY, originalControlBounds.Width, newHeight);
+                        //    break;
                 }
             }
         }
 
         bool isResizing = false;
-        Point originalLocation;
-        Size originalSize;
+
+        Point mouseStartLocation;
+        Rectangle originalControlBounds;
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (LastKnownHandle != HandlePositions.None)
             {
                 isResizing = true;
-                originalLocation = e.Location;
-                originalSize = _linkedControl.Size;
+                mouseStartLocation = e.Location;
+                originalControlBounds = new Rectangle(_linkedControl.Bounds.Location, _linkedControl.Bounds.Size);
             }
-
         }
         protected override void OnMouseUp(MouseEventArgs e)
         {

@@ -36,6 +36,7 @@ namespace TestModel.Editor.Design
                 this.Visible = _linkedControl.Focused;
             };
             control.Move += (s, a) => { SetPosition(); };
+            control.Resize += (s, a) => { SetPosition(); };
 
             SetPosition();
         }

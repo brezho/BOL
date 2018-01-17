@@ -16,6 +16,7 @@ using X.Editor.Model;
 
 namespace X.Editor
 {
+    class MainSuppress { }
     public partial class Main : System.Windows.Forms.Form, IEditorShell
     {
         public event EventHandler<HirarchyChangedEventArgs> HierarchyChanged;
@@ -70,10 +71,6 @@ namespace X.Editor
             var hierarchyProvider = Config.GetProvider(args);
             Hierarchy = hierarchyProvider.CreateHierarchy(this);
             var startingNode = Hierarchy.Nodes().FirstOrDefault();
-            if (startingNode != null)
-            {
-                startingNode.Select();
-            }
 
             Hierarchy.ActivationRequested += (ars, ara) =>
             {
@@ -97,6 +94,14 @@ namespace X.Editor
             explorer.Show(DockPanel, DockState.DockLeft);
             propertyGrid.Show(DockPanel, DockState.DockRight);
             output.Show(DockPanel, DockState.DockBottom);
+
+            if (startingNode != null)
+            {
+                startingNode.Select();
+                Hierarchy.Activate(startingNode);
+            }
+
+
             //Commands.Add("Show Output", () => { output.Show(this.DockPanel, DockState.DockBottom); }, "Show the output panel");
             //  Commands.Add("Show Explorer", () => { explorer.Show(this.DockPanel, DockState.DockLeft); }, "Show the explorer panel");
             // Commands.Add("Show Properties", () => { propertyGrid.Show(this.DockPanel, DockState.DockRight); }, "Show the selected object properties panel");

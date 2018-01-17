@@ -105,12 +105,5 @@ namespace TestModel.Editor.Controls
             DrawGrid(e.Graphics);
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         }
-
-        //public void ActivateIn(IEditorContainer newWindow)
-        //{
-        //    container = newWindow;
-        //    container.Shell.TraceLine("Oscilloscope loaded");
-        //    MoveOrResize.Init(this);
-        //}
     }
 }

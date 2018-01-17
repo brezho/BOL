@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<CodeGenerationDirectives>
+  <Run 
+    BuildAction="Compile" 
+    Args="C:\Workspaces\BusinessOrientedLanguage\BOL\DataTypes.Generator\bin\Debug\netcoreapp2.0\DataTypes.Generator.dll {0}" 
+    Command="dotnet"
+    />
+</CodeGenerationDirectives>

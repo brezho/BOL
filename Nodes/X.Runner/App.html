@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style>
+        .parent {
+            display: flex;
+            flex: 1 1 100%;
+            flex-direction: column;
+            justify-content: space-around;
+            border: 2px solid blue;
+        }
+        .child {
+            flex: 1 1 250px;
+            display: inline-flex;
+            margin-bottom: 15px;
+            border: 2px solid green;
+            padding: 25px;
+        }
+
+    </style>
+</head>
+<body>
+    <script type="text/javascript" src="/js"></script>
+
+    <script type="text/javascript">
+        var amp1;
+        var st;
+
+        window.onload = function (event) {
+            amp1 = new Dispatcher();
+
+            st = new Store([], amp1);
+
+            st.handler = function (evt, payload) {
+                switch (evt) {
+                    case 'AddNewOne':
+                        this.data.push({ "Name": payload.Name, "Age": payload.Age });
+                        this.dataChanged();
+                }
+            };
+
+            //// Subscribe to store changes to repopulate the 'root' div
+            st.onDataChanged(function () {
+                $("#root").renderTemplate("list", st.data);
+            });
+
+
+            //NewOne("Item 1", 5);
+            //NewOne("Item 2", 4);
+
+            initializeWebSocket();
+
+        };
+
+        function NewOne(name, age) {
+            amp1.dispatch('AddNewOne', { Name: name, Age: age });
+        }
+
+    </script>
+
+
+    <script id="list" type="text/html">
+        <ul class="parent">
+            {{#data}}
+            <li class="child">{{>listItem}}</li>
+            {{/data}}
+        </ul>
+        {{^data}}
+        Click "New Business Model" on the bottom navigation bar to create a model
+        {{/data}}
+    </script>
+    <script id="listItem" type="text/html">
+        {{Name}}   {{Age}}
+    </script>
+
+
+
+    <!-- MAIN APP DIV -->
+    <div id="root" />
+</body>
+</html>

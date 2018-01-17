@@ -1,0 +1,8 @@
+﻿Runner: could have several instances running at same time
+Its role is to act as an application server
+
+Gets its DB connection from Coordinator
+Gets a connection to a Dispatcher from Coordinator and receives all its Dispatcher events
+Sends its own events to Dispatcher for Broadcasting
+
+Runs a separate WebServer for end-users

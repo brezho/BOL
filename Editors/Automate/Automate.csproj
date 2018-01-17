@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="X.System" Version="1.0.0-r586" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="X.System">
+      <HintPath>..\..\X.Editor\bin\Debug\X.System.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

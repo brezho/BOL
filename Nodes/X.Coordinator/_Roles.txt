@@ -1,0 +1,5 @@
+﻿Coordinator: is a unique server instance
+Its role is to distribute information to other services when they start
+
+Provides DB connection details to Dispatcher(s) and Runner(s)
+Provide a Dispatcher endpoint to AppRunner(s)

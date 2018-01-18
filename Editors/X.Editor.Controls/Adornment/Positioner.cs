@@ -10,13 +10,15 @@ using X.Editor.Controls.Utils;
 namespace X.Editor.Controls.Adornment
 {
     class PositionerX { }
-    public class Positioner : IAdorner
+    public class Positioner : AbstractAdorner
     {
         const int SIZE = 10;
 
         internal Positioner(Surface surface, Control target) : base(surface, target)
         {
             this.Size = new Size(SIZE, SIZE);
+            BackColor = Color.Red;
+            
             ResetLocation();
         }
 
@@ -25,18 +27,14 @@ namespace X.Editor.Controls.Adornment
             Location = new Point(Target.Right + 2, Target.Top);
         }
 
-        protected internal override void OnTargetMoved(Rectangle newBoundaries)
+        protected internal override void OnTargetMoved()
         {
             ResetLocation();
         }
 
-        protected internal override void OnTargetResized(Rectangle newBoundaries)
+        protected internal override void OnTargetResized()
         {
             ResetLocation();
-        }
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            e.Graphics.FillRectangle(Brushes.Red, ClientRectangle);
         }
     }
 }

@@ -9,22 +9,21 @@ using System.Windows.Forms;
 namespace X.Editor.Controls.Adornment
 {
     class ResizerX { }
-    public class Resizer : IAdorner
+    public class Resizer : AbstractAdorner
     {
-        Rectangle targetBounds;
         internal Resizer(Surface surface, Control target) : base(surface, target)
         {
 
         }
 
-        protected internal override void OnTargetMoved(Rectangle newBoundaries)
+        protected internal override void OnTargetMoved()
         {
-            targetBounds = newBoundaries;
+
         }
 
-        protected internal override void OnTargetResized(Rectangle newBoundaries)
+        protected internal override void OnTargetResized()
         {
-            targetBounds = newBoundaries;
+
         }
 
         enum HandlePositions

@@ -9,16 +9,17 @@ using System.Windows.Forms;
 namespace X.Editor.Controls.Adornment
 {
     class AdornerX { }
-    public abstract class IAdorner : Control
+    public abstract class AbstractAdorner : Control
     {
         protected Surface Surface { get; private set; }
         protected Control Target { get; private set; }
-        internal IAdorner(Surface surface, Control target)
+        internal AbstractAdorner(Surface surface, Control target)
         {
             Surface = surface;
             Target = target;
         }
-        protected internal virtual void OnTargetResized(Rectangle newBoundaries) { }
-        protected internal virtual void OnTargetMoved(Rectangle newBoundaries) { }
+        protected internal virtual void OnTargetResized() { }
+        protected internal virtual void OnTargetMoved() { }
+        protected internal virtual void OnTargetGotFocus() { }
     }
 }

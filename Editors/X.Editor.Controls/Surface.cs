@@ -20,7 +20,7 @@ namespace X.Editor.Controls
     {
         ConcurrentDictionary<Type, HashSet<Control>> _ = new ConcurrentDictionary<Type, HashSet<Control>>();
         IEditorContainer _editor;
-        OneToManyRelationship<Control, IAdorner> _relations = new OneToManyRelationship<Control, IAdorner>();
+        OneToManyRelationship<Control, AbstractAdorner> _relations = new OneToManyRelationship<Control, AbstractAdorner>();
 
         public Surface(IEditorContainer container)
         {
@@ -29,7 +29,7 @@ namespace X.Editor.Controls
         }
 
         Control[] AllControls { get { return _relations.Sources; } }
-        IAdorner[] AllAdorners { get { return _relations.Targets; } }
+        AbstractAdorner[] AllAdorners { get { return _relations.Targets; } }
 
 
         void Log(params object[] stuff)
@@ -52,7 +52,7 @@ namespace X.Editor.Controls
             _editor.Shell.TraceLine();
         }
 
-        public T AdornWith<T>(Control ctrl) where T : IAdorner
+        public T AdornWith<T>(Control ctrl) where T : AbstractAdorner
         {
             var set = _.GetOrAdd(typeof(T), new HashSet<Control>());
             if (!set.Add(ctrl)) throw new Exception("Control is already adorned with " + typeof(T).FullName);
@@ -70,25 +70,19 @@ namespace X.Editor.Controls
         {
             ctrl.GotFocus += (s, a) =>
             {
-                Log("Ctrl focused", ctrl);
+                foreach (var ad in AllAdorners) ad.OnTargetGotFocus();
             };
             ctrl.LostFocus += (s, a) =>
             {
-                Log("Ctrl lost focus", ctrl);
+                foreach (var ad in AllAdorners) ad.OnTargetLostFocus();
             };
             ctrl.Resize += (s, a) =>
             {
-                var bnds = ctrl.Bounds;
-                Log("Ctrl resized", ctrl, "New size", bnds.Size);
-                var adorners = _relations[ctrl];
-                foreach (var ad in adorners) ad.OnTargetResized(bnds);
+                foreach (var ad in AllAdorners) ad.OnTargetResized();
             };
             ctrl.LocationChanged += (s, a) =>
             {
-                var bnds = ctrl.Bounds;
-                Log("Ctrl moved", ctrl, "New position", bnds.Location);
-                var adorners = _relations[ctrl];
-                foreach (var ad in adorners) ad.OnTargetMoved(bnds);
+                foreach (var ad in AllAdorners) ad.OnTargetMoved();
             };
         }
 

@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TestModel.Editor.Design;
+using X.Editor.Controls;
+using X.Editor.Controls.Adornment;
 using X.Editor.Model;
 
 namespace TestModel.Editor.Controls
@@ -16,27 +18,27 @@ namespace TestModel.Editor.Controls
 
         public void ActivateIn(IEditorContainer newWindow)
         {
-            newWindow.Shell.TraceLine("NullControl loaded");
-            newWindow.Shell.TraceLine("Size: " + this.Size.ToString());
+
+            var surface = new Surface(newWindow);
 
             var oscillo = new Oscilloscope();
             var knob = new KnobControl();
             var ts = new TimedSerie<int>();
 
-            this.Controls.Add(oscillo);
-            this.Controls.Add(knob);
 
-            Adorner.MakeMovable(knob, newWindow);
-            Adorner.MakeMovable(oscillo, newWindow);
+            //oscillo.ValuesSource = ts;
+            //ts.ValuesSource = knob;
 
-            //Adorner.MakeHandles(knob, newWindow);
-            Adorner.MakeHandles(oscillo, newWindow);
+            surface.Controls.Add(oscillo);
+            //surface.Controls.Add(knob);
 
-            Adorner.MakeResizable(knob, newWindow);
-            Adorner.MakeResizable(oscillo, newWindow);
+            surface.AdornWith<Positioner>(oscillo);
+            surface.AdornWith<Resizer>(oscillo);
 
-            oscillo.ValuesSource = ts;
-            ts.ValuesSource = knob;
+            this.Controls.Add(surface);
+
+
+
         }
     }
 }

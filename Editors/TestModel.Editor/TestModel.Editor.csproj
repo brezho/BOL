@@ -131,12 +131,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Design\Adorner.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Controls\NullControl.cs" />
     <Compile Include="Controls\Oscilloscope.cs" />
-    <Compile Include="Design\Handles.cs" />
-    <Compile Include="Design\MoverControl.cs" />
     <Compile Include="IPublisher.cs" />
     <Compile Include="Controls\KnobControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

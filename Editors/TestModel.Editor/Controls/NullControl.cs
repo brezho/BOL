@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using TestModel.Editor.Design;
 using X.Editor.Controls;
 using X.Editor.Controls.Adornment;
 using X.Editor.Model;

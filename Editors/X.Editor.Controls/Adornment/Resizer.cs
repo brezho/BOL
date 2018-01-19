@@ -28,22 +28,21 @@ namespace X.Editor.Controls.Adornment
             UpdateStyles();
             DoubleBuffered = true;
 
-            ResetDimensions();
-            target.SizeChanged += (s, a) => ResetDimensions();
-            target.LocationChanged += (s, a) => ResetDimensions();
+
+            this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN);
+            this.MakeSizeRelativeTo(target, MARGIN, MARGIN, MARGIN, MARGIN);
+
+            PrecomputeDimensions();
+            target.SizeChanged += (s, a) => PrecomputeDimensions();
+            target.LocationChanged += (s, a) => PrecomputeDimensions();
+
         }
 
-        void ResetDimensions()
-        {
-            var controlNewBounds = Target.Bounds.Wrapper(MARGIN, MARGIN, MARGIN, MARGIN);
-            SetBounds(controlNewBounds.X, controlNewBounds.Y, controlNewBounds.Width, controlNewBounds.Height, BoundsSpecified.All);
-            PrecomputeDimensions();
-        }
         void PrecomputeDimensions()
         {
             int lineDistanceToBorder = -MARGIN / 2;
-
             _borderBounds = ClientRectangle.Wrapper(lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder);
+
 
             var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
             var gripsLocationsAlignedOn = _borderBounds.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);

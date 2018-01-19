@@ -18,7 +18,7 @@ namespace X.Editor.Controls.Adornment
         {
             this.Size = new Size(SIZE, SIZE);
             BackColor = Color.Yellow;
-            this.HasLocationRelativeTo(target, 2, 0, KnownPoint.TopRight);
+            this.MakeLocationRelativeTo(target, 2, 0, KnownPoint.TopRight);
         }
 
         bool moving = false;

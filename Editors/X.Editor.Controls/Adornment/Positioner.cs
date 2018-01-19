@@ -17,24 +17,41 @@ namespace X.Editor.Controls.Adornment
         internal Positioner(Surface surface, Control target) : base(surface, target)
         {
             this.Size = new Size(SIZE, SIZE);
-            BackColor = Color.Red;
-            
-            ResetLocation();
+            BackColor = Color.Yellow;
+            this.HasLocationRelativeTo(target, 2, 0, KnownPoint.TopRight);
         }
 
-        private void ResetLocation()
+        bool moving = false;
+        Point moveStartLocation;
+        protected override void OnMouseMove(MouseEventArgs e)
         {
-            Location = new Point(Target.Right + 2, Target.Top);
+            if (moving)
+            {
+                // Get the difference between the two points
+                int xDiff = e.Location.X - moveStartLocation.X;
+                int yDiff = e.Location.Y - moveStartLocation.Y;
+                Target.Location = Target.Location.Translate(xDiff, yDiff);
+            }
+        }
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
         }
 
-        protected internal override void OnTargetMoved()
+        protected override void OnMouseEnter(EventArgs e)
         {
-            ResetLocation();
+            this.Cursor = Cursors.Hand;
         }
 
-        protected internal override void OnTargetResized()
+        protected override void OnMouseUp(MouseEventArgs e)
         {
-            ResetLocation();
+            moving = false;
         }
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            moving = true;
+            moveStartLocation = e.Location;
+        }
+
     }
 }

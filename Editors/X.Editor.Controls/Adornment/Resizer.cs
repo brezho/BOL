@@ -5,64 +5,130 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
     class ResizerX { }
     public class Resizer : AbstractAdorner
     {
+        const int MARGIN = 10;
+        const int GRIPS_SIZE = 6;
+
+        Pen _borderPen = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot };
+        Dictionary<KnownPoint, Rectangle> _gripsBounds = null;
+        Rectangle _borderBounds = Rectangle.Empty;
+        Point mouseMoveStartLocation;
+        KnownPoint currentlyHoveredGrip;
+        bool isResizing = false;
+
         internal Resizer(Surface surface, Control target) : base(surface, target)
         {
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+            UpdateStyles();
+            DoubleBuffered = true;
 
+            ResetDimensions();
+            target.SizeChanged += (s, a) => ResetDimensions();
+            target.LocationChanged += (s, a) => ResetDimensions();
         }
 
-        protected internal override void OnTargetMoved()
+        void ResetDimensions()
         {
-
+            var controlNewBounds = Target.Bounds.Wrapper(MARGIN, MARGIN, MARGIN, MARGIN);
+            SetBounds(controlNewBounds.X, controlNewBounds.Y, controlNewBounds.Width, controlNewBounds.Height, BoundsSpecified.All);
+            PrecomputeDimensions();
         }
-
-        protected internal override void OnTargetResized()
+        void PrecomputeDimensions()
         {
+            int lineDistanceToBorder = -MARGIN / 2;
 
-        }
+            _borderBounds = ClientRectangle.Wrapper(lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder);
 
-        enum HandlePositions
-        {
-            None,
-            TopLeft,
-            TopMiddle,
-            TopRight,
-            MiddleRight,
-            BottomRight,
-            BottomMiddle,
-            BottomLeft,
-            MiddleLeft,
-        }
-        const int handleSize = 4;
+            var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
+            var gripsLocationsAlignedOn = _borderBounds.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
 
-        Dictionary<HandlePositions, Rectangle> GetHandlesRectangles(Rectangle source)
-        {
-            var leftAlign = source.Left;
-            var rightAlign = source.Right - handleSize;
-            var topAlign = source.Top;
-            var bottomAlign = source.Bottom - handleSize;
 
-            var verticalMiddleAlign = leftAlign + source.Width / 2 - handleSize / 2;
-            var horizontalMiddleAlign = topAlign + source.Height / 2 - handleSize / 2;
-
-            var size = new Size(handleSize, handleSize);
-
-            return new Dictionary<HandlePositions, Rectangle>()
+            _gripsBounds = new Dictionary<KnownPoint, Rectangle>()
                 {
-                    { HandlePositions.TopLeft , new Rectangle(new Point(leftAlign, topAlign), size)},
-                    { HandlePositions.TopMiddle, new Rectangle(new Point(verticalMiddleAlign, topAlign), size) },
-                    { HandlePositions.TopRight, new Rectangle(new Point(rightAlign, topAlign), size)},
-                    { HandlePositions.MiddleRight, new Rectangle(new Point(rightAlign, horizontalMiddleAlign), size)},
-                    { HandlePositions.BottomRight, new Rectangle(new Point(rightAlign, bottomAlign), size)},
-                    { HandlePositions.BottomMiddle, new Rectangle(new Point(verticalMiddleAlign, bottomAlign), size)},
-                    { HandlePositions.BottomLeft, new Rectangle(new Point(leftAlign, bottomAlign), size)},
-                    { HandlePositions.MiddleLeft, new Rectangle(new Point(leftAlign, horizontalMiddleAlign), size)},
+                    { KnownPoint.TopLeft , new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
+                    { KnownPoint.TopMiddle, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
+                    { KnownPoint.TopRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopRight), gripsSize)},
+                    { KnownPoint.MiddleRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
+                    { KnownPoint.BottomRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
+                    { KnownPoint.BottomMiddle, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
+                    { KnownPoint.BottomLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
+                    { KnownPoint.MiddleLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
                 };
+        }
+
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (!isResizing)
+            {
+                currentlyHoveredGrip = _gripsBounds.FirstOrDefault(x => x.Value.Contains(e.Location)).Key;
+
+                switch (currentlyHoveredGrip)
+                {
+                    case KnownPoint.BottomRight:
+                        Cursor = Cursors.SizeNWSE;
+                        break;
+                    case KnownPoint.MiddleRight:
+                        Cursor = Cursors.SizeWE;
+                        break;
+                    case KnownPoint.TopRight:
+                        Cursor = Cursors.SizeNESW;
+                        break;
+                    case KnownPoint.BottomLeft:
+                        Cursor = Cursors.SizeNESW;
+                        break;
+                    case KnownPoint.MiddleLeft:
+                        Cursor = Cursors.SizeWE;
+                        break;
+                    case KnownPoint.TopLeft:
+                        Cursor = Cursors.SizeNWSE;
+                        break;
+                    case KnownPoint.BottomMiddle:
+                        Cursor = Cursors.SizeNS;
+                        break;
+                    case KnownPoint.TopMiddle:
+                        Cursor = Cursors.SizeNS;
+                        break;
+                    default:
+                        Cursor = Cursors.Default;
+                        break;
+
+                }
+            }
+            else
+            {
+                var currentMouseLocation = this.PointToScreen(e.Location);
+                var deltaX = currentMouseLocation.X - mouseMoveStartLocation.X;
+                var deltaY = currentMouseLocation.Y - mouseMoveStartLocation.Y;
+                Rectangle newBoundaries = Target.Bounds.Expand(currentlyHoveredGrip, deltaX, deltaY);
+                mouseMoveStartLocation = currentMouseLocation;
+                Target.SetBounds(newBoundaries.X, newBoundaries.Y, newBoundaries.Width, newBoundaries.Height, BoundsSpecified.All);
+            }
+        }
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (currentlyHoveredGrip != default(KnownPoint))
+            {
+                isResizing = true;
+                mouseMoveStartLocation = this.PointToScreen(e.Location);
+            }
+        }
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            isResizing = false;
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
+            e.Graphics.DrawRectangle(_borderPen, _borderBounds);
+            e.Graphics.FillRectangles(_borderPen.Brush, _gripsBounds.Values.ToArray());
         }
     }
 }

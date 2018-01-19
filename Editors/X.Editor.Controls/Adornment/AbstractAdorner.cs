@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
@@ -17,9 +18,7 @@ namespace X.Editor.Controls.Adornment
         {
             Surface = surface;
             Target = target;
+            this.IsVisibleOnFocusOf(target);
         }
-        protected internal virtual void OnTargetResized() { }
-        protected internal virtual void OnTargetMoved() { }
-        protected internal virtual void OnTargetGotFocus() { }
     }
 }

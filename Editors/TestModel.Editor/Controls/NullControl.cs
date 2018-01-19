@@ -14,7 +14,7 @@ namespace TestModel.Editor.Controls
     class NullControlSuppressDesignTime { }
     class NullControl : Control, IEditor
     {
-       
+
 
         public void ActivateIn(IEditorContainer newWindow)
         {

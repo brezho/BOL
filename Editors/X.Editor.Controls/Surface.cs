@@ -24,6 +24,14 @@ namespace X.Editor.Controls
 
         public Surface(IEditorContainer container)
         {
+
+
+            SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
+
+            UpdateStyles();
+            DoubleBuffered = true;
+
+
             _editor = container;
             this.Dock = DockStyle.Fill;
         }
@@ -32,7 +40,7 @@ namespace X.Editor.Controls
         AbstractAdorner[] AllAdorners { get { return _relations.Targets; } }
 
 
-        void Log(params object[] stuff)
+        public void Log(params object[] stuff)
         {
             if (stuff != null)
             {
@@ -68,22 +76,6 @@ namespace X.Editor.Controls
 
         void SubscribeToControlEvents(Control ctrl)
         {
-            ctrl.GotFocus += (s, a) =>
-            {
-                foreach (var ad in AllAdorners) ad.OnTargetGotFocus();
-            };
-            ctrl.LostFocus += (s, a) =>
-            {
-                foreach (var ad in AllAdorners) ad.OnTargetLostFocus();
-            };
-            ctrl.Resize += (s, a) =>
-            {
-                foreach (var ad in AllAdorners) ad.OnTargetResized();
-            };
-            ctrl.LocationChanged += (s, a) =>
-            {
-                foreach (var ad in AllAdorners) ad.OnTargetMoved();
-            };
         }
 
 
@@ -98,6 +90,8 @@ namespace X.Editor.Controls
                 var bnds = AllControls[0].Bounds;
                 var inc = bnds.Translate(100, 100);
                 AllControls[0].SetBounds(inc.Location.X, inc.Location.Y, inc.Width, inc.Height, BoundsSpecified.All);
+
+                AllControls[0].Width += 20;
             }
         }
         protected override void OnMouseUp(MouseEventArgs e)

@@ -18,7 +18,6 @@ namespace X.Editor.Controls.Adornment
         {
             Surface = surface;
             Target = target;
-            this.IsVisibleOnFocusOf(target);
         }
     }
 }

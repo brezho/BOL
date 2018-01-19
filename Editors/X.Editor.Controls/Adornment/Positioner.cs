@@ -18,6 +18,8 @@ namespace X.Editor.Controls.Adornment
         {
             this.Size = new Size(SIZE, SIZE);
             BackColor = Color.Yellow;
+
+            this.IsVisibleOnFocusOf(target);
             this.MakeLocationRelativeTo(target, 2, 0, KnownPoint.TopRight);
         }
 
@@ -52,6 +54,5 @@ namespace X.Editor.Controls.Adornment
             moving = true;
             moveStartLocation = e.Location;
         }
-
     }
 }

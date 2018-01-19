@@ -28,14 +28,14 @@ namespace X.Editor.Controls.Adornment
             UpdateStyles();
             DoubleBuffered = true;
 
-
+            this.IsVisibleOnFocusOf(target);
             this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN);
             this.MakeSizeRelativeTo(target, -MARGIN, -MARGIN, MARGIN, MARGIN);
 
             PrecomputeDimensions();
             target.SizeChanged += (s, a) => PrecomputeDimensions();
             target.LocationChanged += (s, a) => PrecomputeDimensions();
-            BringToFront();
+
         }
 
         void PrecomputeDimensions()
@@ -59,7 +59,6 @@ namespace X.Editor.Controls.Adornment
                     { KnownPoint.Center, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.Center), gripsSize)},
                 };
         }
-
 
         protected override void OnMouseMove(MouseEventArgs e)
         {

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using X.Editor.Controls;
 using X.Editor.Controls.Adornment;
+using X.Editor.Controls.Utils;
 using X.Editor.Model;
 
 namespace TestModel.Editor.Controls
@@ -31,6 +33,10 @@ namespace TestModel.Editor.Controls
 
             surface.AdornWith<Positioner>(oscillo);
             surface.AdornWith<Resizer>(oscillo);
+
+            var connectorAdorner = surface.AdornWith<Connector>(oscillo);
+            connectorAdorner.AddSourceAt("Src", KnownPoint.TopLeft, new Point(4, 4));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(4, 12));
 
             surface.AdornWith<Positioner>(knob);
             surface.AdornWith<Resizer>(knob);

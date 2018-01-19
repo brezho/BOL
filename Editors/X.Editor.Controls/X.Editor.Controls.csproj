@@ -131,6 +131,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adornment\AbstractAdorner.cs" />
+    <Compile Include="Adornment\Connector.cs" />
     <Compile Include="Adornment\Positioner.cs" />
     <Compile Include="Adornment\Resizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

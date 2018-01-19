@@ -19,25 +19,23 @@ namespace TestModel.Editor.Controls
         {
 
             var surface = new Surface(newWindow);
-
             var oscillo = new Oscilloscope();
             var knob = new KnobControl();
             var ts = new TimedSerie<int>();
 
-
-            //oscillo.ValuesSource = ts;
-            //ts.ValuesSource = knob;
+            oscillo.ValuesSource = ts;
+            ts.ValuesSource = knob;
 
             surface.Controls.Add(oscillo);
-            //surface.Controls.Add(knob);
+            surface.Controls.Add(knob);
 
             surface.AdornWith<Positioner>(oscillo);
             surface.AdornWith<Resizer>(oscillo);
 
+            surface.AdornWith<Positioner>(knob);
+            surface.AdornWith<Resizer>(knob);
+
             this.Controls.Add(surface);
-
-
-
         }
     }
 }

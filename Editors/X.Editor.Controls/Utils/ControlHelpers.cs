@@ -15,28 +15,26 @@ namespace X.Editor.Controls.Utils
         {
             ctrl.Location = target.Bounds.GetLocationOf(fromPoint).Translate(dx, dy);
             target.LocationChanged += (s, a) =>
-             {
-                 ctrl.Location = target.Bounds.GetLocationOf(fromPoint).Translate(dx, dy);
-             };
+            {
+                ctrl.Location = target.Bounds.GetLocationOf(fromPoint).Translate(dx, dy);
+            };
             target.SizeChanged += (s, a) =>
             {
                 ctrl.Location = target.Bounds.GetLocationOf(fromPoint).Translate(dx, dy);
             };
         }
-
-        public static void MakeSizeRelativeTo(this Control ctrl, Control target, int dx1, int dy1, int dx2, int dy2)
+        public static void MakeSizeRelativeTo(this Control ctrl, Control target, int dw1, int dh1, int dw2, int dh2)
         {
-            ctrl.Size = target.Bounds.Wrapper(dx1, dy1, dx2, dy2).Size;
+            ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
             target.LocationChanged += (s, a) =>
             {
-                ctrl.Size = target.Bounds.Wrapper(dx1, dy1, dx2, dy2).Size;
+                ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
             };
             target.SizeChanged += (s, a) =>
             {
-                ctrl.Size = target.Bounds.Wrapper(dx1, dy1, dx2, dy2).Size;
+                ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
             };
         }
-
         public static void IsVisibleOnFocusOf(this Control ctrl, Control target)
         {
             ctrl.Visible = target.Focused;
@@ -45,5 +43,4 @@ namespace X.Editor.Controls.Utils
             ctrl.LostFocus += (s, a) => ctrl.Visible = target.Focused;
         }
     }
-
 }

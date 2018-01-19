@@ -39,68 +39,66 @@ namespace X.Editor.Controls.Utils
                 default: throw new NotImplementedException();
             }
         }
-
-        public static Rectangle Wrapper(this Rectangle ctrl, int dx1, int dy1, int dx2, int dy2)
-        {
-            var newLoc = ctrl.Location.Translate(-dx1, -dy1);
-            var newSize = new Size(dx1 + ctrl.Width + dx2, dy1 + ctrl.Height + dy2);
-            return new Rectangle(newLoc, newSize);
-        }
-
-        public static Point Translate(this Point source, int dx = 0, int dy = 0)
+        public static Point Translate(this Point source, int dx, int dy)
         {
             var newOne = new Point(source.X, source.Y);
             newOne.Offset(dx, dy);
             return newOne;
         }
-        public static Size Translate(this Size source, int dx = 0, int dy = 0)
+        public static Rectangle Translate(this Rectangle source, int dx, int dy)
         {
-            return new Size(source.Width + dx, source.Height + dy);
+            return new Rectangle(source.Location.Translate(dx, dy), source.Size);
         }
-        public static Rectangle Translate(this Rectangle source, int dx = 0, int dy = 0)
+        public static Size Grow(this Size source, int dw, int dh)
         {
-            var newOne = new Rectangle(source.Location, source.Size);
-            newOne.Offset(dx, dy);
-            return newOne;
+            return new Size(source.Width + dw, source.Height + dh);
         }
-        public static Rectangle Expand(this Rectangle source, KnownPoint fromPoint, int deltaX = 0, int deltaY = 0)
+        public static Rectangle Grow(this Rectangle source, int dw, int dh)
+        {
+            return Grow(source, KnownPoint.BottomRight, dw, dh);
+        }
+        public static Rectangle Grow(this Rectangle source, KnownPoint draggedPoint, int dw, int dh)
         {
             Size size = source.Size;
             Point loc = source.Location;
 
-            switch (fromPoint)
+            switch (draggedPoint)
             {
                 case KnownPoint.TopLeft:
-                    loc = loc.Translate(deltaX, deltaY);
-                    size = size.Translate(-deltaX, -deltaY);
+                    loc = loc.Translate(dw, dh);
+                    size = size.Grow(-dw, -dh);
                     break;
                 case KnownPoint.TopMiddle:
-                    loc = loc.Translate(0, deltaY);
-                    size = size.Translate(0, -deltaY);
+                    loc = loc.Translate(0, dh);
+                    size = size.Grow(0, -dh);
                     break;
                 case KnownPoint.TopRight:
-                    loc = loc.Translate(0, deltaY);
-                    size = size.Translate(deltaX, -deltaY);
+                    loc = loc.Translate(0, dh);
+                    size = size.Grow(dw, -dh);
                     break;
                 case KnownPoint.MiddleRight:
                     // no need to change location => loc = loc.Translate(0, 0);
-                    size = size.Translate(deltaX, 0);
+                    size = size.Grow(dw, 0);
                     break;
                 case KnownPoint.BottomRight:
                     // no need to change location => loc = loc.Translate(0, 0);
-                    size = size.Translate(deltaX, deltaY);
+                    size = size.Grow(dw, dh);
                     break;
                 case KnownPoint.BottomMiddle:
                     // no need to change location => loc = loc.Translate(0, 0);
-                    size = size.Translate(0, deltaY);
+                    size = size.Grow(0, dh);
                     break;
                 case KnownPoint.BottomLeft:
-                    loc = loc.Translate(deltaX, 0);
-                    size = size.Translate(-deltaX, deltaY);
+                    loc = loc.Translate(dw, 0);
+                    size = size.Grow(-dw, dh);
                     break;
                 case KnownPoint.MiddleLeft:
-                    loc = loc.Translate(deltaX, 0);
-                    size = size.Translate(-deltaX, 0);
+                    loc = loc.Translate(dw, 0);
+                    size = size.Grow(-dw, 0);
+                    break;
+                case KnownPoint.Center:
+                    loc = loc.Translate(dw / 2, dh / 2);
+                    size = size.Grow(dw, dh);
                     break;
             }
             return new Rectangle(loc, size);

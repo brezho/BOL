@@ -30,23 +30,21 @@ namespace X.Editor.Controls.Adornment
 
 
             this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN);
-            this.MakeSizeRelativeTo(target, MARGIN, MARGIN, MARGIN, MARGIN);
+            this.MakeSizeRelativeTo(target, -MARGIN, -MARGIN, MARGIN, MARGIN);
 
             PrecomputeDimensions();
             target.SizeChanged += (s, a) => PrecomputeDimensions();
             target.LocationChanged += (s, a) => PrecomputeDimensions();
-
+            BringToFront();
         }
 
         void PrecomputeDimensions()
         {
-            int lineDistanceToBorder = -MARGIN / 2;
-            _borderBounds = ClientRectangle.Wrapper(lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder, lineDistanceToBorder);
-
+            int lineDistanceToBorder = MARGIN / 2;
+            _borderBounds = ClientRectangle.Translate(lineDistanceToBorder, lineDistanceToBorder).Grow(-MARGIN, -MARGIN);
 
             var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
             var gripsLocationsAlignedOn = _borderBounds.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
-
 
             _gripsBounds = new Dictionary<KnownPoint, Rectangle>()
                 {
@@ -58,6 +56,7 @@ namespace X.Editor.Controls.Adornment
                     { KnownPoint.BottomMiddle, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
                     { KnownPoint.BottomLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
                     { KnownPoint.MiddleLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
+                    { KnownPoint.Center, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.Center), gripsSize)},
                 };
         }
 
@@ -94,6 +93,9 @@ namespace X.Editor.Controls.Adornment
                     case KnownPoint.TopMiddle:
                         Cursor = Cursors.SizeNS;
                         break;
+                    case KnownPoint.Center:
+                        Cursor = Cursors.Cross;
+                        break;
                     default:
                         Cursor = Cursors.Default;
                         break;
@@ -105,7 +107,7 @@ namespace X.Editor.Controls.Adornment
                 var currentMouseLocation = this.PointToScreen(e.Location);
                 var deltaX = currentMouseLocation.X - mouseMoveStartLocation.X;
                 var deltaY = currentMouseLocation.Y - mouseMoveStartLocation.Y;
-                Rectangle newBoundaries = Target.Bounds.Expand(currentlyHoveredGrip, deltaX, deltaY);
+                Rectangle newBoundaries = Target.Bounds.Grow(currentlyHoveredGrip, deltaX, deltaY);
                 mouseMoveStartLocation = currentMouseLocation;
                 Target.SetBounds(newBoundaries.X, newBoundaries.Y, newBoundaries.Width, newBoundaries.Height, BoundsSpecified.All);
             }

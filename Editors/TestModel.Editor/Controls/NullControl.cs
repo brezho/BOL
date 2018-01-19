@@ -36,7 +36,13 @@ namespace TestModel.Editor.Controls
 
             var connectorAdorner = surface.AdornWith<Connector>(oscillo);
             connectorAdorner.AddSourceAt("Src", KnownPoint.TopLeft, new Point(4, 4));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(4, 12));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(4, 20));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(8, 40));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(12, 60));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(16, 80));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(20, 100));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(24, 120));
+            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(28, 140));
 
             surface.AdornWith<Positioner>(knob);
             surface.AdornWith<Resizer>(knob);

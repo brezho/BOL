@@ -70,7 +70,11 @@ namespace X.Editor.Controls
             {
                 SubscribeToControlEvents(ctrl);
             }
+
+
             this.Controls.Add(adorner);
+
+            ctrl.SendToBack();
             return adorner;
         }
 

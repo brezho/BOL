@@ -17,15 +17,16 @@ namespace X.Editor.Controls.Adornment
         List<ConnectorPoint> _points = new List<ConnectorPoint>();
         internal Connector(Surface surface, Control target) : base(surface, target)
         {
+            SetStyle(ControlStyles.ResizeRedraw, true);
             this.IsVisibleOnFocusOf(target);
             this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN);
             this.MakeSizeRelativeTo(target, -MARGIN, -MARGIN, MARGIN, MARGIN);
             BringToFront();
             BackColor = Color.Green;
 
-            PrecomputeDimensions();
-            target.SizeChanged += (s, a) => PrecomputeDimensions();
-            target.LocationChanged += (s, a) => PrecomputeDimensions();
+            //PrecomputeDimensions();
+            //target.SizeChanged += (s, a) => PrecomputeDimensions();
+            //target.LocationChanged += (s, a) => PrecomputeDimensions();
 
         }
 
@@ -45,7 +46,7 @@ namespace X.Editor.Controls.Adornment
         ConnectorPoint Add(ConnectorPoint x)
         {
             _points.Add(x);
-            PrecomputeDimensions();
+            //PrecomputeDimensions();
             return x;
         }
 
@@ -60,21 +61,59 @@ namespace X.Editor.Controls.Adornment
         }
         protected override void OnPaint(PaintEventArgs e)
         {
-            var aPointRectangle = new Rectangle(0, 0, 4, 4);
+            #region region example
+            Point point = new Point(60, 10);
+
+            // Assume that the variable "point" contains the location of the
+            // most recent mouse click.
+            // To simulate a hit, assign (60, 10) to point.
+            // To simulate a miss, assign (0, 0) to point.
+
+            SolidBrush solidBrush = new SolidBrush(Color.Black);
+            Region region1 = new Region(new Rectangle(50, 0, 50, 150));
+            Region region2 = new Region(new Rectangle(0, 50, 150, 50));
+
+            // Create a plus-shaped region by forming the union of region1 and 
+            // region2.
+            // The union replaces region1.
+            region1.Union(region2);
+
+            if (region1.IsVisible(point, e.Graphics))
+            {
+                // The point is in the region. Use an opaque brush.
+                solidBrush.Color = Color.FromArgb(255, 255, 0, 0);
+            }
+            else
+            {
+                // The point is not in the region. Use a semitransparent brush.
+                solidBrush.Color = Color.FromArgb(64, 255, 0, 0);
+            }
+            Graphics g = this.Target.CreateGraphics();
+            g.FillRegion(solidBrush, region1);
+
+            //e.Graphics.FillRegion(solidBrush, region1);
+            #endregion
+
+
+            var aPointRectangle = new Rectangle(0, 0, 12, 12);
             var allRectangles = new List<Rectangle>();
 
-            var y = 0;
             foreach (var c in _points)
             {
-                //var loc = Target.ClientRectangle.GetLocationOf(c.PositionRelativeTo).Translate(c.Offset.X, c.Offset.Y);
-                var loc = ClientRectangle.GetLocationOf(KnownPoint.BottomRight).Translate(12, y);
+                var loc = Target.ClientRectangle.GetLocationOf(c.PositionRelativeTo).Translate(c.Offset.X, c.Offset.Y);
+
                 var rect = aPointRectangle.Translate(loc.X, loc.Y);
-                Surface.Log(y, rect);
+                Surface.Log("Rect @", rect);
                 allRectangles.Add(rect);
-                y += 4;
             }
+            
             e.Graphics.FillRectangles(Brushes.SkyBlue, allRectangles.ToArray());
-            //base.OnPaint(e);
+
+
+            //Graphics g = this.Target.CreateGraphics();
+            //g.FillRectangles(Brushes.SkyBlue, allRectangles.ToArray());
+
+            ////base.OnPaint(e);
         }
     }
     public enum ConnectorPointType

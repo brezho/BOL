@@ -24,13 +24,10 @@ namespace X.Editor.Controls
 
         public Surface(IEditorContainer container)
         {
-
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
 
             UpdateStyles();
             DoubleBuffered = true;
-
 
             _editor = container;
             this.Dock = DockStyle.Fill;
@@ -71,17 +68,30 @@ namespace X.Editor.Controls
                 SubscribeToControlEvents(ctrl);
             }
 
-
             this.Controls.Add(adorner);
 
-            ctrl.SendToBack();
             return adorner;
         }
 
         void SubscribeToControlEvents(Control ctrl)
         {
+            ctrl.Paint += Ctrl_Paint;
         }
 
+        private void Ctrl_Paint(object sender, PaintEventArgs e)
+        {
+            Control ctrl = sender as Control;
+            var adorners = _relations[ctrl];
+            Log();
+            Log("PAAAAIIIIINNNTTT");
+            foreach (var adorner in adorners)
+            {
+                Log(adorner);
+            }
+            //var gr = ctrl.CreateGraphics();
+
+          //  e.Graphics.DrawString("tutu", new Font("Arial", 24, FontStyle.Bold), Brushes.Red, new Point(20, 20));
+        }
 
         Point? mouseDownLocation = null;
         protected override void OnMouseDown(MouseEventArgs e)
@@ -107,11 +117,13 @@ namespace X.Editor.Controls
         {
             base.OnMouseMove(e);
         }
-        //protected override void OnPaint(PaintEventArgs pe)
-        //{
-        //    Log("Painting");
-        //    var adorners = AllAdorners;
-        //    foreach (var ad in adorners) ad.Paint(pe.Graphics);
-        //}
+        protected override void OnPaint(PaintEventArgs pe)
+        {
+            var rect = new Rectangle(0, 0, 50, 50);
+            SolidBrush solidBrush = new SolidBrush(Color.Yellow);
+            Region region1 = new Region(rect);
+            Graphics g = AllControls[0].CreateGraphics();
+            g.FillRegion(solidBrush, region1);
+        }
     }
 }

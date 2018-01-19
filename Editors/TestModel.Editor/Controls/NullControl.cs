@@ -21,28 +21,28 @@ namespace TestModel.Editor.Controls
         {
 
             var surface = new Surface(newWindow);
-            var oscillo = new Oscilloscope();
+            //var oscillo = new Oscilloscope();
             var knob = new KnobControl();
-            var ts = new TimedSerie<int>();
+            //var ts = new TimedSerie<int>();
 
-            oscillo.ValuesSource = ts;
-            ts.ValuesSource = knob;
+            //oscillo.ValuesSource = ts;
+            //ts.ValuesSource = knob;
 
-            surface.Controls.Add(oscillo);
+           // surface.Controls.Add(oscillo);
             surface.Controls.Add(knob);
 
-            surface.AdornWith<Positioner>(oscillo);
-            surface.AdornWith<Resizer>(oscillo);
+            //surface.AdornWith<Positioner>(oscillo);
+            //surface.AdornWith<Resizer>(oscillo);
 
-            var connectorAdorner = surface.AdornWith<Connector>(oscillo);
-            connectorAdorner.AddSourceAt("Src", KnownPoint.TopLeft, new Point(4, 4));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(4, 20));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(8, 40));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(12, 60));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(16, 80));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(20, 100));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(24, 120));
-            connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(28, 140));
+            //var connectorAdorner = surface.AdornWith<Connector>(oscillo);
+            //connectorAdorner.AddSourceAt("Src", KnownPoint.TopLeft, new Point(4, 4));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(4, 20));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(8, 40));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(12, 60));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(16, 80));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(20, 100));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(24, 120));
+            //connectorAdorner.AddDestinationAt("Dst", KnownPoint.TopLeft, new Point(28, 140));
 
             surface.AdornWith<Positioner>(knob);
             surface.AdornWith<Resizer>(knob);

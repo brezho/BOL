@@ -12,7 +12,7 @@ namespace X.Editor.Controls.Adornment
     class ResizerX { }
     public class Resizer : IAdorner
     {
-        const int MARGIN = 10;
+        //const int MARGIN = 10;
         const int GRIPS_SIZE = 6;
 
         Pen _borderPen = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot };
@@ -22,18 +22,40 @@ namespace X.Editor.Controls.Adornment
         KnownPoint currentlyHoveredGrip;
         bool isResizing = false;
 
-        Rectangle latestBounds;
+        Rectangle drawingArea;
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            latestBounds = new Rectangle(new Point(-MARGIN, -MARGIN), ctrlSize.Grow(2 * MARGIN, 2 * MARGIN));
-            //var res = ctrlSize.Translate(-MARGIN, -MARGIN).Grow(2 * MARGIN, 2 * MARGIN);
-            return latestBounds;
+            var margin = GRIPS_SIZE + GRIPS_SIZE / 2;
+            drawingArea = new Rectangle(new Point(-margin, -margin), ctrlSize.Grow(2 * margin, 2 * margin));
+            return drawingArea;
         }
         public void PaintAt(Graphics graphics, Point offset)
         {
-            using (var p = new Pen(Color.Red, 1))
+            var borderLine = new Rectangle(new Point(GRIPS_SIZE / 2, GRIPS_SIZE / 2), drawingArea.Size.Grow(-GRIPS_SIZE, -GRIPS_SIZE));
+
+            using (var p = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot })
             {
-                graphics.DrawRectangle(p, latestBounds.Translate(offset.X, offset.Y));
+                graphics.DrawRectangle(p, borderLine.Translate(offset.X, offset.Y));
+            }
+
+            var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
+            var alignedTo = borderLine.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2).Translate(offset.X, offset.Y);
+            var _gripsBounds = new Dictionary<KnownPoint, Rectangle>()
+                    {
+                        { KnownPoint.TopLeft , new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
+                        { KnownPoint.TopMiddle, new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
+                        { KnownPoint.TopRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopRight), gripsSize)},
+                        { KnownPoint.MiddleRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
+                        { KnownPoint.BottomRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
+                        { KnownPoint.BottomMiddle, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
+                        { KnownPoint.BottomLeft, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
+                        { KnownPoint.MiddleLeft, new Rectangle(alignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
+                        { KnownPoint.Center, new Rectangle(alignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
+                    };
+
+            //using (var p = new Pen(Color.Red, 1))
+            {
+                graphics.FillRectangles(Brushes.Red, _gripsBounds.Values.ToArray());
             }
         }
 
@@ -50,7 +72,7 @@ namespace X.Editor.Controls.Adornment
         //    PrecomputeDimensions();
         //    target.SizeChanged += (s, a) => PrecomputeDimensions();
         //    target.LocationChanged += (s, a) => PrecomputeDimensions();
-           
+
         //    //RECENT
         //    //BringToFront();
         //}

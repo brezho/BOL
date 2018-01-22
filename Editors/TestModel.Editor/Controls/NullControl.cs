@@ -29,11 +29,11 @@ namespace TestModel.Editor.Controls
             surface.Controls.Add(oscillo);
             surface.Controls.Add(knob);
 
-            surface.AdornWith<Positioner>(oscillo);
-            surface.AdornWith<Resizer>(oscillo);
+             surface.AdornWith<Resizer>(oscillo);
+           surface.AdornWith<Positioner>(oscillo);
 
-            surface.AdornWith<Positioner>(knob);
             surface.AdornWith<Resizer>(knob);
+            surface.AdornWith<Positioner>(knob);
 
             this.Controls.Add(surface);
         }

@@ -19,17 +19,15 @@ namespace X.Editor.Controls.Adornment
             //  Control.Target.MouseMove += Target_MouseMove;
         }
 
-        Rectangle latestBounds;
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
             var myTopLeft = ctrlSize.GetLocationOf(KnownPoint.TopRight).Translate(2, 0);
-            latestBounds = new Rectangle(myTopLeft, new Size(6, 6));
-            return latestBounds;
+            return new Rectangle(myTopLeft, new Size(10, 10));
         }
 
         public void PaintAt(Graphics graphics, Point offset)
         {
-            graphics.FillRectangle(Brushes.Yellow, latestBounds.Translate(offset.X, offset.Y));
+            graphics.FillRectangle(Brushes.Yellow, new Rectangle(new Point(2, 0), new Size(10, 10)).Translate(offset.X, offset.Y));
         }
 
         private void Target_MouseMove(object sender, MouseEventArgs e)
@@ -39,7 +37,7 @@ namespace X.Editor.Controls.Adornment
                 // Get the difference between the two points
                 int xDiff = e.Location.X - moveStartLocation.X;
                 int yDiff = e.Location.Y - moveStartLocation.Y;
-           //     Control.Target.Location = Control.Target.Location.Translate(xDiff, yDiff);
+                //     Control.Target.Location = Control.Target.Location.Translate(xDiff, yDiff);
             }
         }
 

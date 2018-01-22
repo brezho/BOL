@@ -78,6 +78,7 @@ namespace X.Editor.Controls
         private void Ctrl_LostFocus(object sender, EventArgs e)
         {
             latestTarget = null;
+            Invalidate();
         }
         private void Ctrl_GotFocus(object sender, EventArgs e)
         {
@@ -111,8 +112,9 @@ namespace X.Editor.Controls
             foreach (var newBound in _newBounds) boundsUnion = Rectangle.Union(boundsUnion, newBound);
 
             bitmapLocation = boundsUnion.Translate(target.Location.X, target.Location.Y);
-
             bitmap = new Bitmap(boundsUnion.Width, boundsUnion.Height, PixelFormat.Format32bppArgb);
+
+
             using (var gr = Graphics.FromImage(bitmap))
             {
                 for (int i = 0; i < affectedAdorners.Length; i++)

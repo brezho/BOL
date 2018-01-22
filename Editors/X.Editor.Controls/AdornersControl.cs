@@ -38,7 +38,7 @@ namespace X.Editor.Controls
         private void RecomputeBounds()
         {
             Surface.Log("TargetControl Bounds", Target.Bounds);
-            _rectangles = _adorners.Select(x => x.GetBounds(Target.Bounds)).ToArray();
+            _rectangles = _adorners.Select(x => x.GetRelativeBoundaries(Target.Size)).ToArray();
 
             Rectangle computedBounds = Rectangle.Empty;
             foreach (var r in _rectangles)

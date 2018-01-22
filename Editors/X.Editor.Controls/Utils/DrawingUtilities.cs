@@ -23,21 +23,26 @@ namespace X.Editor.Controls.Utils
 
     public static class DrawingUtilities
     {
-        public static Point GetLocationOf(this Rectangle rectangle, KnownPoint ofPoint = KnownPoint.TopLeft)
+        public static Point GetLocationOf(this Size size, KnownPoint ofPoint = KnownPoint.TopLeft)
         {
             switch (ofPoint)
             {
-                case KnownPoint.TopLeft: return rectangle.Location;
-                case KnownPoint.TopMiddle: return rectangle.Location.Translate(rectangle.Width / 2, 0);
-                case KnownPoint.TopRight: return rectangle.Location.Translate(rectangle.Width, 0);
-                case KnownPoint.MiddleRight: return rectangle.Location.Translate(rectangle.Width, rectangle.Height / 2);
-                case KnownPoint.BottomRight: return rectangle.Location.Translate(rectangle.Width, rectangle.Height);
-                case KnownPoint.BottomMiddle: return rectangle.Location.Translate(rectangle.Width / 2, rectangle.Height);
-                case KnownPoint.BottomLeft: return rectangle.Location.Translate(0, rectangle.Height);
-                case KnownPoint.MiddleLeft: return rectangle.Location.Translate(0, rectangle.Height / 2);
-                case KnownPoint.Center: return rectangle.Location.Translate(rectangle.Width / 2, rectangle.Height / 2);
+                case KnownPoint.TopLeft: return Point.Empty;
+                case KnownPoint.TopMiddle: return new Point(size.Width / 2, 0);
+                case KnownPoint.TopRight: return new Point(size.Width, 0);
+                case KnownPoint.MiddleRight: return new Point(size.Width, size.Height / 2);
+                case KnownPoint.BottomRight: return new Point(size.Width, size.Height);
+                case KnownPoint.BottomMiddle: return new Point(size.Width / 2, size.Height);
+                case KnownPoint.BottomLeft: return new Point(0, size.Height);
+                case KnownPoint.MiddleLeft: return new Point(0, size.Height / 2);
+                case KnownPoint.Center: return new Point(size.Width / 2, size.Height / 2);
                 default: throw new NotImplementedException();
             }
+        }
+
+        public static Point GetLocationOf(this Rectangle rectangle, KnownPoint ofPoint = KnownPoint.TopLeft)
+        {
+            return rectangle.Size.GetLocationOf(ofPoint).Translate(rectangle.X, rectangle.Y);
         }
         public static Point Translate(this Point source, int dx, int dy)
         {

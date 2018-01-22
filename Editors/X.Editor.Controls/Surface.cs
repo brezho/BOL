@@ -20,7 +20,7 @@ namespace X.Editor.Controls
     {
         ConcurrentDictionary<Type, HashSet<Control>> _oneTypeOfAdornerPerControl = new ConcurrentDictionary<Type, HashSet<Control>>();
         IEditorContainer _editor;
-        ConcurrentDictionary<Control, AdornersControl> _adornerControls = new ConcurrentDictionary<Control, AdornersControl>();
+        OneToManyRelationship<Control, IAdorner> _relations = new OneToManyRelationship<Control, IAdorner>();
 
         public Surface(IEditorContainer container)
         {
@@ -33,8 +33,8 @@ namespace X.Editor.Controls
             this.Dock = DockStyle.Fill;
         }
 
-        //Control[] AllControls { get { return _relations.Sources; } }
-        //IAdorner[] AllAdorners { get { return _relations.Targets; } }
+        Control[] AllControls { get { return _relations.Sources; } }
+        IAdorner[] AllAdorners { get { return _relations.Targets; } }
 
 
         public void Log(params object[] stuff)
@@ -63,17 +63,30 @@ namespace X.Editor.Controls
             if (!set.Add(ctrl)) throw new Exception("Control is already adorned with " + typeof(T).FullName);
 
             var adorner = new T();
-            var adornerControl = _adornerControls.GetOrAdd(ctrl, x =>
+
+            if(_relations.Add(ctrl, adorner) == AddRelationResult.NewSource)
             {
-                var res = new AdornersControl(this, ctrl);
-                this.Controls.Add(res);
-                return res;
-            });
-            adornerControl.AddAdorner(adorner);
-            this.Controls.Add(ctrl);
-     //       ctrl.Location = new Point(50, 50);
+                ctrl.LocationChanged += Ctrl_LocationChanged;
+                ctrl.SizeChanged += Ctrl_SizeChanged;
+                this.Controls.Add(ctrl);
+            }
 
             return adorner;
+        }
+
+        private void Ctrl_SizeChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Ctrl_LocationChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            base.OnPaint(e);
         }
     }
 }

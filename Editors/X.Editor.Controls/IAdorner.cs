@@ -10,6 +10,6 @@ namespace X.Editor.Controls
 {
     public interface IAdorner
     {
-        Rectangle GetBounds(Rectangle ctrlBounds);
+        Rectangle GetRelativeBoundaries(Size ctrlSize);
     }
 }

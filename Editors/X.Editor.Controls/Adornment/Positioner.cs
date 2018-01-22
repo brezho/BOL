@@ -18,15 +18,14 @@ namespace X.Editor.Controls.Adornment
 
         public Positioner()
         {
-          //  Control.Target.MouseMove += Target_MouseMove;
+            //  Control.Target.MouseMove += Target_MouseMove;
         }
 
-        public Rectangle GetBounds(Rectangle ctrlBounds)
+        public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            var myTopLeft = ctrlBounds.GetLocationOf(KnownPoint.TopRight).Translate(2,0);
-            var res =new Rectangle(myTopLeft, new Size(6, 6));
+            var myTopLeft = ctrlSize.GetLocationOf(KnownPoint.TopRight).Translate(2, 0);
+            var res = new Rectangle(myTopLeft, new Size(6, 6));
             return res;
-
         }
 
         private void Target_MouseMove(object sender, MouseEventArgs e)

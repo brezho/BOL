@@ -24,9 +24,10 @@ namespace X.Editor.Controls.Adornment
         KnownPoint currentlyHoveredGrip;
         bool isResizing = false;
 
-        public Rectangle GetBounds(Rectangle ctrlBounds)
+        public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            var res = ctrlBounds.Translate(-MARGIN, -MARGIN).Grow(2 * MARGIN, 2 * MARGIN);
+            var res = new Rectangle(new Point(-MARGIN, -MARGIN), ctrlSize.Grow(2 * MARGIN, 2 * MARGIN));
+            //var res = ctrlSize.Translate(-MARGIN, -MARGIN).Grow(2 * MARGIN, 2 * MARGIN);
             return res;
         }
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,7 +37,6 @@ namespace X.Editor.Controls
         Control[] AllControls { get { return _relations.Sources; } }
         IAdorner[] AllAdorners { get { return _relations.Targets; } }
 
-
         public void Log(params object[] stuff)
         {
             if (stuff != null)
@@ -56,7 +56,6 @@ namespace X.Editor.Controls
             }
             _editor.Shell.TraceLine();
         }
-
         public T AdornWith<T>(Control ctrl) where T : IAdorner, new()
         {
             var set = _oneTypeOfAdornerPerControl.GetOrAdd(typeof(T), new HashSet<Control>());
@@ -64,8 +63,10 @@ namespace X.Editor.Controls
 
             var adorner = new T();
 
-            if(_relations.Add(ctrl, adorner) == AddRelationResult.NewSource)
+            if (_relations.Add(ctrl, adorner) == AddRelationResult.NewSource)
             {
+                ctrl.GotFocus += Ctrl_GotFocus;
+                ctrl.LostFocus += Ctrl_LostFocus;
                 ctrl.LocationChanged += Ctrl_LocationChanged;
                 ctrl.SizeChanged += Ctrl_SizeChanged;
                 this.Controls.Add(ctrl);
@@ -74,19 +75,66 @@ namespace X.Editor.Controls
             return adorner;
         }
 
+        private void Ctrl_LostFocus(object sender, EventArgs e)
+        {
+            latestTarget = null;
+        }
+        private void Ctrl_GotFocus(object sender, EventArgs e)
+        {
+            InvalidateControl((Control)sender);
+            Invalidate();
+        }
         private void Ctrl_SizeChanged(object sender, EventArgs e)
         {
-
+            InvalidateControl((Control)sender);
         }
-
         private void Ctrl_LocationChanged(object sender, EventArgs e)
         {
-
+            InvalidateControl((Control)sender);
         }
 
+        Control latestTarget;
+        Bitmap bitmap;
+        Rectangle bitmapLocation;
+        Rectangle boundsUnion;
+        void InvalidateControl(Control target)
+        {
+            latestTarget = target;
+            var affectedAdorners = _relations[target];
+            List<Rectangle> _newBounds = new List<Rectangle>();
+            foreach (var adoner in affectedAdorners)
+            {
+                _newBounds.Add(adoner.GetRelativeBoundaries(target.Size));
+            }
+
+            boundsUnion = Rectangle.Empty;
+            foreach (var newBound in _newBounds) boundsUnion = Rectangle.Union(boundsUnion, newBound);
+
+            bitmapLocation = boundsUnion.Translate(target.Location.X, target.Location.Y);
+
+            bitmap = new Bitmap(boundsUnion.Width, boundsUnion.Height, PixelFormat.Format32bppArgb);
+            using (var gr = Graphics.FromImage(bitmap))
+            {
+                for (int i = 0; i < affectedAdorners.Length; i++)
+                {
+                    var offset = new Point(_newBounds[i].X - boundsUnion.X, _newBounds[i].Y - boundsUnion.Y);
+                    affectedAdorners[i].PaintAt(gr, offset);
+                }
+            }
+
+            Invalidate();
+        }
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
+            if (latestTarget != null)
+            {
+                using (var ctrlGraphics = latestTarget.CreateGraphics())
+                {
+                    ctrlGraphics.DrawImage(bitmap, boundsUnion.Location);
+                }
+                e.Graphics.DrawImage(bitmap, bitmapLocation);
+            }
         }
     }
 }

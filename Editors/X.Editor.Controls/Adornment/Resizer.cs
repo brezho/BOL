@@ -12,8 +12,6 @@ namespace X.Editor.Controls.Adornment
     class ResizerX { }
     public class Resizer : IAdorner
     {
-        public AdornersControl Control { get; set; }
-
         const int MARGIN = 10;
         const int GRIPS_SIZE = 6;
 
@@ -24,11 +22,19 @@ namespace X.Editor.Controls.Adornment
         KnownPoint currentlyHoveredGrip;
         bool isResizing = false;
 
+        Rectangle latestBounds;
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            var res = new Rectangle(new Point(-MARGIN, -MARGIN), ctrlSize.Grow(2 * MARGIN, 2 * MARGIN));
+            latestBounds = new Rectangle(new Point(-MARGIN, -MARGIN), ctrlSize.Grow(2 * MARGIN, 2 * MARGIN));
             //var res = ctrlSize.Translate(-MARGIN, -MARGIN).Grow(2 * MARGIN, 2 * MARGIN);
-            return res;
+            return latestBounds;
+        }
+        public void PaintAt(Graphics graphics, Point offset)
+        {
+            using (var p = new Pen(Color.Red, 1))
+            {
+                graphics.DrawRectangle(p, latestBounds.Translate(offset.X, offset.Y));
+            }
         }
 
         public Resizer()

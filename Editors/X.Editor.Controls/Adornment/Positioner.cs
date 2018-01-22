@@ -12,8 +12,6 @@ namespace X.Editor.Controls.Adornment
     class PositionerX { }
     public class Positioner : IAdorner
     {
-        public AdornersControl Control { get; set; }
-
         const int SIZE = 10;
 
         public Positioner()
@@ -21,11 +19,17 @@ namespace X.Editor.Controls.Adornment
             //  Control.Target.MouseMove += Target_MouseMove;
         }
 
+        Rectangle latestBounds;
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
             var myTopLeft = ctrlSize.GetLocationOf(KnownPoint.TopRight).Translate(2, 0);
-            var res = new Rectangle(myTopLeft, new Size(6, 6));
-            return res;
+            latestBounds = new Rectangle(myTopLeft, new Size(6, 6));
+            return latestBounds;
+        }
+
+        public void PaintAt(Graphics graphics, Point offset)
+        {
+            graphics.FillRectangle(Brushes.Yellow, latestBounds.Translate(offset.X, offset.Y));
         }
 
         private void Target_MouseMove(object sender, MouseEventArgs e)
@@ -35,7 +39,7 @@ namespace X.Editor.Controls.Adornment
                 // Get the difference between the two points
                 int xDiff = e.Location.X - moveStartLocation.X;
                 int yDiff = e.Location.Y - moveStartLocation.Y;
-                Control.Target.Location = Control.Target.Location.Translate(xDiff, yDiff);
+           //     Control.Target.Location = Control.Target.Location.Translate(xDiff, yDiff);
             }
         }
 

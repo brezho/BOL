@@ -11,5 +11,6 @@ namespace X.Editor.Controls
     public interface IAdorner
     {
         Rectangle GetRelativeBoundaries(Size ctrlSize);
+        void PaintAt(Graphics graphics, Point offset);
     }
 }

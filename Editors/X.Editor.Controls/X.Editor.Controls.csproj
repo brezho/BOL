@@ -130,9 +130,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Adornment\AbstractAdorner.cs" />
+    <Compile Include="AdornersControl.cs" />
     <Compile Include="Adornment\Positioner.cs" />
     <Compile Include="Adornment\Resizer.cs" />
+    <Compile Include="IAdorner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Surface.cs" />
     <Compile Include="Utils\DrawingUtilities.cs" />

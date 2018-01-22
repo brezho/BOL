@@ -18,26 +18,23 @@ namespace X.Editor.Controls
     class SurfaceX { }
     public partial class Surface : Control
     {
-        ConcurrentDictionary<Type, HashSet<Control>> _ = new ConcurrentDictionary<Type, HashSet<Control>>();
+        ConcurrentDictionary<Type, HashSet<Control>> _oneTypeOfAdornerPerControl = new ConcurrentDictionary<Type, HashSet<Control>>();
         IEditorContainer _editor;
-        OneToManyRelationship<Control, AbstractAdorner> _relations = new OneToManyRelationship<Control, AbstractAdorner>();
+        OneToManyRelationship<Control, IAdorner> _relations = new OneToManyRelationship<Control, IAdorner>();
 
         public Surface(IEditorContainer container)
         {
-
-
             SetStyle(ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.UserPaint | ControlStyles.ResizeRedraw, true);
 
             UpdateStyles();
             DoubleBuffered = true;
-
 
             _editor = container;
             this.Dock = DockStyle.Fill;
         }
 
         Control[] AllControls { get { return _relations.Sources; } }
-        AbstractAdorner[] AllAdorners { get { return _relations.Targets; } }
+        IAdorner[] AllAdorners { get { return _relations.Targets; } }
 
 
         public void Log(params object[] stuff)
@@ -60,54 +57,36 @@ namespace X.Editor.Controls
             _editor.Shell.TraceLine();
         }
 
-        public T AdornWith<T>(Control ctrl) where T : AbstractAdorner
+        public T AdornWith<T>(Control ctrl) where T : IAdorner, new()
         {
-            var set = _.GetOrAdd(typeof(T), new HashSet<Control>());
+            var set = _oneTypeOfAdornerPerControl.GetOrAdd(typeof(T), new HashSet<Control>());
             if (!set.Add(ctrl)) throw new Exception("Control is already adorned with " + typeof(T).FullName);
-            var adorner = (T)typeof(T).Hype().GetOne(this, ctrl);
 
-            if (_relations.Add(ctrl, adorner) == AddRelationResult.NewSource)
+            var adorner = new T();
+
+            if(_relations.Add(ctrl, adorner) == AddRelationResult.NewSource)
             {
-                SubscribeToControlEvents(ctrl);
+                ctrl.LocationChanged += Ctrl_LocationChanged;
+                ctrl.SizeChanged += Ctrl_SizeChanged;
+                this.Controls.Add(ctrl);
             }
-            this.Controls.Add(adorner);
+
             return adorner;
         }
 
-        void SubscribeToControlEvents(Control ctrl)
+        private void Ctrl_SizeChanged(object sender, EventArgs e)
         {
+
         }
 
-
-        Point? mouseDownLocation = null;
-        protected override void OnMouseDown(MouseEventArgs e)
+        private void Ctrl_LocationChanged(object sender, EventArgs e)
         {
-            mouseDownLocation = e.Location;
-            Log("Mouse down", mouseDownLocation.Value);
 
-            if (e.Button == MouseButtons.Right)
-            {
-                var bnds = AllControls[0].Bounds;
-                var inc = bnds.Translate(100, 100);
-                AllControls[0].SetBounds(inc.Location.X, inc.Location.Y, inc.Width, inc.Height, BoundsSpecified.All);
+        }
 
-                AllControls[0].Width += 20;
-            }
-        }
-        protected override void OnMouseUp(MouseEventArgs e)
+        protected override void OnPaint(PaintEventArgs e)
         {
-            var delta = new Point(e.Location.X - mouseDownLocation.Value.X, e.Location.Y - mouseDownLocation.Value.Y);
-            Log("Mouse up", e.Location, "Delta", delta);
+            base.OnPaint(e);
         }
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            base.OnMouseMove(e);
-        }
-        //protected override void OnPaint(PaintEventArgs pe)
-        //{
-        //    Log("Painting");
-        //    var adorners = AllAdorners;
-        //    foreach (var ad in adorners) ad.Paint(pe.Graphics);
-        //}
     }
 }

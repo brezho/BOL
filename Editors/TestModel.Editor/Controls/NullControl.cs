@@ -29,8 +29,8 @@ namespace TestModel.Editor.Controls
             surface.Controls.Add(oscillo);
             surface.Controls.Add(knob);
 
-             surface.AdornWith<Resizer>(oscillo);
-           surface.AdornWith<Positioner>(oscillo);
+            surface.AdornWith<Resizer>(oscillo);
+            surface.AdornWith<Positioner>(oscillo);
 
             surface.AdornWith<Resizer>(knob);
             surface.AdornWith<Positioner>(knob);

@@ -12,22 +12,29 @@ namespace X.Editor.Controls.Adornment
     class PositionerX { }
     public class Positioner : IAdorner
     {
-        const int SIZE = 10;
+        const int SIZE = 15;
+        Rectangle handleArea;
 
         public Positioner()
         {
             //  Control.Target.MouseMove += Target_MouseMove;
+            handleArea = new Rectangle(new Point(0, 0), new Size(SIZE, SIZE));
         }
 
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            var myTopLeft = ctrlSize.GetLocationOf(KnownPoint.TopRight).Translate(2, 0);
-            return new Rectangle(myTopLeft, new Size(10, 10));
+            return handleArea.Translate(ctrlSize.Width + SIZE / 3, 0);
         }
 
         public void PaintAt(Graphics graphics, Point offset)
         {
-            graphics.FillRectangle(Brushes.Yellow, new Rectangle(new Point(2, 0), new Size(10, 10)).Translate(offset.X, offset.Y));
+            graphics.FillRectangle(Brushes.SkyBlue, handleArea.Translate(offset.X, offset.Y));
+        }
+
+        public Cursor GetHitTests(Point location)
+        {
+            if (handleArea.Contains(location)) return Cursors.Hand;
+            return Cursors.Default;
         }
 
         private void Target_MouseMove(object sender, MouseEventArgs e)

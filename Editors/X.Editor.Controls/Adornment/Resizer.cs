@@ -16,47 +16,82 @@ namespace X.Editor.Controls.Adornment
         const int GRIPS_SIZE = 6;
 
         Pen _borderPen = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot };
-        Dictionary<KnownPoint, Rectangle> _gripsBounds = null;
-        Rectangle _borderBounds = Rectangle.Empty;
-        Point mouseMoveStartLocation;
-        KnownPoint currentlyHoveredGrip;
-        bool isResizing = false;
+        Dictionary<KnownPoint, Rectangle> _handles = null;
+        Rectangle _borderLineArea;
 
-        Rectangle drawingArea;
+        //Point mouseMoveStartLocation;
+        //KnownPoint currentlyHoveredGrip;
+        //bool isResizing = false;
         public Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
-            var margin = GRIPS_SIZE + GRIPS_SIZE / 2;
-            drawingArea = new Rectangle(new Point(-margin, -margin), ctrlSize.Grow(2 * margin, 2 * margin));
-            return drawingArea;
+            var marginAround = GRIPS_SIZE + GRIPS_SIZE / 2;
+            var relativeArea = new Rectangle(new Point(-marginAround, -marginAround), ctrlSize.Grow(2 * marginAround, 2 * marginAround));
+            _borderLineArea = Rectangle.Empty.Translate(GRIPS_SIZE / 2, GRIPS_SIZE / 2).Grow(ctrlSize.Width + 2 * GRIPS_SIZE, ctrlSize.Height + 2 * GRIPS_SIZE);
+
+            var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
+            var gripsAlignedTo = _borderLineArea.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
+            _handles = new Dictionary<KnownPoint, Rectangle>()
+                    {
+                        { KnownPoint.TopLeft , new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
+                        { KnownPoint.TopMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
+                        { KnownPoint.TopRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopRight), gripsSize)},
+                        { KnownPoint.MiddleRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
+                        { KnownPoint.BottomRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
+                        { KnownPoint.BottomMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
+                        { KnownPoint.BottomLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
+                        { KnownPoint.MiddleLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
+                        { KnownPoint.Center, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
+                    };
+
+            // border line area (leave 1 Grip size all around control)
+
+            return relativeArea;
+
         }
         public void PaintAt(Graphics graphics, Point offset)
         {
-            var borderLine = new Rectangle(new Point(GRIPS_SIZE / 2, GRIPS_SIZE / 2), drawingArea.Size.Grow(-GRIPS_SIZE, -GRIPS_SIZE));
 
             using (var p = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot })
             {
-                graphics.DrawRectangle(p, borderLine.Translate(offset.X, offset.Y));
+                graphics.DrawRectangle(p, _borderLineArea.Translate(offset.X, offset.Y));
             }
 
-            var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
-            var alignedTo = borderLine.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2).Translate(offset.X, offset.Y);
-            var _gripsBounds = new Dictionary<KnownPoint, Rectangle>()
-                    {
-                        { KnownPoint.TopLeft , new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
-                        { KnownPoint.TopMiddle, new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
-                        { KnownPoint.TopRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.TopRight), gripsSize)},
-                        { KnownPoint.MiddleRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
-                        { KnownPoint.BottomRight, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
-                        { KnownPoint.BottomMiddle, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
-                        { KnownPoint.BottomLeft, new Rectangle(alignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
-                        { KnownPoint.MiddleLeft, new Rectangle(alignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
-                        { KnownPoint.Center, new Rectangle(alignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
-                    };
 
-            //using (var p = new Pen(Color.Red, 1))
+            graphics.FillRectangles(Brushes.Red, _handles.Values.ToArray());
+        }
+
+        public Cursor GetHitTests(Point location)
+        {
+            foreach (var handle in _handles)
             {
-                graphics.FillRectangles(Brushes.Red, _gripsBounds.Values.ToArray());
+                if (handle.Value.Contains(location))
+                {
+                    switch (handle.Key)
+                    {
+                        case KnownPoint.BottomRight:
+                            return Cursors.SizeNWSE;
+                        case KnownPoint.MiddleRight:
+                            return Cursors.SizeWE;
+                        case KnownPoint.TopRight:
+                            return Cursors.SizeNESW;
+                        case KnownPoint.BottomLeft:
+                            return Cursors.SizeNESW;
+                        case KnownPoint.MiddleLeft:
+                            return Cursors.SizeWE;
+                        case KnownPoint.TopLeft:
+                            return Cursors.SizeNWSE;
+                        case KnownPoint.BottomMiddle:
+                            return Cursors.SizeNS;
+                        case KnownPoint.TopMiddle:
+                            return Cursors.SizeNS;
+                        case KnownPoint.Center:
+                            return Cursors.Cross;
+                        default:
+                            throw new NotImplementedException();
+                    }
+                }
             }
+            return Cursors.Default;
         }
 
         public Resizer()

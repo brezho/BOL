@@ -34,6 +34,44 @@ namespace X.Editor.Controls
             this.Dock = DockStyle.Fill;
         }
 
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                var bnds = AllControls[0].Bounds;
+                var newBnds = bnds.Translate(75, 50).Grow(20, 10);
+                AllControls[0].SetBounds(newBnds.X, newBnds.Y, newBnds.Width, newBnds.Height);
+            }
+            else base.OnMouseDown(e);
+        }
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (focusedControl != null)
+            {
+                var affectedAdorners = _relations[focusedControl];
+
+                foreach (var adoner in affectedAdorners)
+                {
+                    var bnds = adoner.GetRelativeBoundaries(focusedControl.Size);
+                    var adornerBounds = bnds.Translate(focusedControl.Location.X, focusedControl.Location.Y);
+                    if (adornerBounds.Contains(e.Location))
+                    {
+                        Cursor = adoner.GetHitTests(e.Location.Translate(-adornerBounds.X, -adornerBounds.Y));
+                        if (Cursor != Cursors.Default)
+                        {
+                            //what next
+
+                        }
+                        return;
+                    }
+                }
+            }
+             Cursor = Cursors.Default;
+
+            base.OnMouseMove(e);
+        }
+
+
         Control[] AllControls { get { return _relations.Sources; } }
         IAdorner[] AllAdorners { get { return _relations.Targets; } }
 
@@ -77,7 +115,7 @@ namespace X.Editor.Controls
 
         private void Ctrl_LostFocus(object sender, EventArgs e)
         {
-            latestTarget = null;
+            focusedControl = null;
             Invalidate();
         }
         private void Ctrl_GotFocus(object sender, EventArgs e)
@@ -94,24 +132,24 @@ namespace X.Editor.Controls
             InvalidateControl((Control)sender);
         }
 
-        Control latestTarget;
+        Control focusedControl;
         Bitmap bitmap;
         Rectangle bitmapLocation;
         Rectangle boundsUnion;
         void InvalidateControl(Control target)
         {
-            latestTarget = target;
-            var affectedAdorners = _relations[target];
+            focusedControl = target;
+            var affectedAdorners = _relations[focusedControl];
             List<Rectangle> _newBounds = new List<Rectangle>();
             foreach (var adoner in affectedAdorners)
             {
-                _newBounds.Add(adoner.GetRelativeBoundaries(target.Size));
+                _newBounds.Add(adoner.GetRelativeBoundaries(focusedControl.Size));
             }
 
             boundsUnion = Rectangle.Empty;
             foreach (var newBound in _newBounds) boundsUnion = Rectangle.Union(boundsUnion, newBound);
 
-            bitmapLocation = boundsUnion.Translate(target.Location.X, target.Location.Y);
+            bitmapLocation = boundsUnion.Translate(focusedControl.Location.X, focusedControl.Location.Y);
             bitmap = new Bitmap(boundsUnion.Width, boundsUnion.Height, PixelFormat.Format32bppArgb);
 
 
@@ -126,12 +164,13 @@ namespace X.Editor.Controls
 
             Invalidate();
         }
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-            if (latestTarget != null)
+            if (focusedControl != null)
             {
-                using (var ctrlGraphics = latestTarget.CreateGraphics())
+                using (var ctrlGraphics = focusedControl.CreateGraphics())
                 {
                     ctrlGraphics.DrawImage(bitmap, boundsUnion.Location);
                 }

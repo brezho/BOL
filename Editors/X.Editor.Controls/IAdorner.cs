@@ -12,5 +12,6 @@ namespace X.Editor.Controls
     {
         Rectangle GetRelativeBoundaries(Size ctrlSize);
         void PaintAt(Graphics graphics, Point offset);
+        Cursor GetHitTests(Point location);
     }
 }

@@ -34,6 +34,8 @@ namespace X.Editor.Controls
             this.Dock = DockStyle.Fill;
         }
 
+        bool mouseCaptured = false;
+        Point mouseCaptureStartLocation;
         protected override void OnMouseDown(MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -42,9 +44,19 @@ namespace X.Editor.Controls
                 var newBnds = bnds.Translate(75, 50).Grow(20, 10);
                 AllControls[0].SetBounds(newBnds.X, newBnds.Y, newBnds.Width, newBnds.Height);
             }
-            else base.OnMouseDown(e);
+            else
+            {
+                var hitTest = GetHitTest(e.Location);
+                if (hitTest != null)
+                {
+                    mouseCaptured = true;
+                    mouseCaptureStartLocation = e.Location;
+                }
+            }
+            //else base.OnMouseDown(e);
         }
-        protected override void OnMouseMove(MouseEventArgs e)
+
+        Tuple<IAdorner, Cursor> GetHitTest(Point location)
         {
             if (focusedControl != null)
             {
@@ -54,23 +66,46 @@ namespace X.Editor.Controls
                 {
                     var bnds = adoner.GetRelativeBoundaries(focusedControl.Size);
                     var adornerBounds = bnds.Translate(focusedControl.Location.X, focusedControl.Location.Y);
-                    if (adornerBounds.Contains(e.Location))
+                    if (adornerBounds.Contains(location))
                     {
-                        Cursor = adoner.GetHitTests(e.Location.Translate(-adornerBounds.X, -adornerBounds.Y));
-                        if (Cursor != Cursors.Default)
+                        var testResult = adoner.GetHitTests(location.Translate(-adornerBounds.X, -adornerBounds.Y));
+                        if (testResult != Cursors.Default)
                         {
-                            //what next
-
+                            return Tuple.Create(adoner, testResult);
                         }
-                        return;
                     }
                 }
             }
-             Cursor = Cursors.Default;
+            return null;
+        }
+       
 
-            base.OnMouseMove(e);
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            Cursor = Cursors.Default;
         }
 
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            mouseCaptured = false;
+        }
+
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (mouseCaptured)
+            {
+                // Get the difference between the two points
+                int xDiff = e.Location.X - mouseCaptureStartLocation.X;
+                int yDiff = e.Location.Y - mouseCaptureStartLocation.Y;
+                focusedControl.Location = focusedControl.Location.Translate(xDiff, yDiff);
+                mouseCaptureStartLocation = e.Location;
+            }
+            if (focusedControl != null)
+            {
+                var test = GetHitTest(e.Location);
+                if (test != null) Cursor = test.Item2;
+            }
+        }
 
         Control[] AllControls { get { return _relations.Sources; } }
         IAdorner[] AllAdorners { get { return _relations.Targets; } }
@@ -107,12 +142,17 @@ namespace X.Editor.Controls
                 ctrl.LostFocus += Ctrl_LostFocus;
                 ctrl.LocationChanged += Ctrl_LocationChanged;
                 ctrl.SizeChanged += Ctrl_SizeChanged;
+                ctrl.Paint += Ctrl_Paint;
                 this.Controls.Add(ctrl);
             }
 
             return adorner;
         }
-
+        private void Ctrl_Paint(object sender, PaintEventArgs e)
+        {
+            InvalidateControl((Control)sender);
+            Invalidate();
+        }
         private void Ctrl_LostFocus(object sender, EventArgs e)
         {
             focusedControl = null;
@@ -164,7 +204,6 @@ namespace X.Editor.Controls
 
             Invalidate();
         }
-
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);

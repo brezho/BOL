@@ -12,7 +12,7 @@ namespace X.Editor.Controls.Adornment
     class PositionerX { }
     public class Positioner : IAdorner
     {
-        const int SIZE = 15;
+        const int SIZE = 12;
         Rectangle handleArea;
 
         public Positioner()
@@ -28,7 +28,7 @@ namespace X.Editor.Controls.Adornment
 
         public void PaintAt(Graphics graphics, Point offset)
         {
-            graphics.FillRectangle(Brushes.SkyBlue, handleArea.Translate(offset.X, offset.Y));
+            graphics.FillRectangle(Brushes.Yellow, handleArea.Translate(offset.X, offset.Y));
         }
 
         public Cursor GetHitTests(Point location)

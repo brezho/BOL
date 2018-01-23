@@ -12,10 +12,11 @@ namespace X.Editor.Controls.Adornment
     class ResizerX { }
     public class Resizer : IAdorner
     {
-        //const int MARGIN = 10;
         const int GRIPS_SIZE = 6;
+        public Resizer()
+        {
+        }
 
-        Pen _borderPen = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot };
         Dictionary<KnownPoint, Rectangle> _handles = null;
         Rectangle _borderLineArea;
 
@@ -40,7 +41,6 @@ namespace X.Editor.Controls.Adornment
                         { KnownPoint.BottomMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
                         { KnownPoint.BottomLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
                         { KnownPoint.MiddleLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
-                        { KnownPoint.Center, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
                     };
 
             // border line area (leave 1 Grip size all around control)
@@ -50,13 +50,11 @@ namespace X.Editor.Controls.Adornment
         }
         public void PaintAt(Graphics graphics, Point offset)
         {
-
             using (var p = new Pen(Color.Red, 1) { DashStyle = System.Drawing.Drawing2D.DashStyle.Dot })
             {
                 graphics.DrawRectangle(p, _borderLineArea.Translate(offset.X, offset.Y));
             }
-
-
+            
             graphics.FillRectangles(Brushes.Red, _handles.Values.ToArray());
         }
 
@@ -93,46 +91,6 @@ namespace X.Editor.Controls.Adornment
             }
             return Cursors.Default;
         }
-
-        public Resizer()
-        {
-        }
-        //internal Resizer(Surface surface, Control target) 
-        //{
-        //    Surface = surface;
-        //    Target = target;
-        //    this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN);
-        //    this.MakeSizeRelativeTo(target, -MARGIN, -MARGIN, MARGIN, MARGIN);
-
-        //    PrecomputeDimensions();
-        //    target.SizeChanged += (s, a) => PrecomputeDimensions();
-        //    target.LocationChanged += (s, a) => PrecomputeDimensions();
-
-        //    //RECENT
-        //    //BringToFront();
-        //}
-
-        //void PrecomputeDimensions()
-        //{
-        //    int lineDistanceToBorder = MARGIN / 2;
-        //    _borderBounds = ClientRectangle.Translate(lineDistanceToBorder, lineDistanceToBorder).Grow(-MARGIN, -MARGIN);
-
-        //    var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
-        //    var gripsLocationsAlignedOn = _borderBounds.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
-
-        //    _gripsBounds = new Dictionary<KnownPoint, Rectangle>()
-        //        {
-        //            { KnownPoint.TopLeft , new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
-        //            { KnownPoint.TopMiddle, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
-        //            { KnownPoint.TopRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.TopRight), gripsSize)},
-        //            { KnownPoint.MiddleRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
-        //            { KnownPoint.BottomRight, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
-        //            { KnownPoint.BottomMiddle, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
-        //            { KnownPoint.BottomLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
-        //            { KnownPoint.MiddleLeft, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
-        //            { KnownPoint.Center, new Rectangle(gripsLocationsAlignedOn.GetLocationOf(KnownPoint.Center), gripsSize)},
-        //        };
-        //}
 
 
         //protected override void OnMouseMove(MouseEventArgs e)

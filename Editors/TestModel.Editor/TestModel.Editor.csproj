@@ -132,8 +132,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Controls\GdiLoopControl - Copy.cs" />
+    <Compile Include="Controls\GdiLoopControl.cs" />
     <Compile Include="Controls\NullControl.cs" />
     <Compile Include="Controls\Oscilloscope.cs" />
+    <Compile Include="Controls\Stupido.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="IPublisher.cs" />
     <Compile Include="Controls\KnobControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

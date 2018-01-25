@@ -1,0 +1,82 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello World</title>
+    <script src="/pixi"></script>
+    <style>
+        * {
+            padding: 0;
+            margin: 0
+        }
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        //Aliases
+        let Application = PIXI.Application,
+            loader = PIXI.loader,
+            resources = PIXI.loader.resources,
+            Sprite = PIXI.Sprite;
+
+
+    let type = "WebGL"
+    if(!PIXI.utils.isWebGLSupported()){
+      type = "canvas"
+    }
+
+    PIXI.utils.sayHello(type);
+
+    //Create a Pixi Application
+    let app = new Application({
+        width: 600,         // default: 800
+        height: 450,        // default: 600
+        antialias: true,    // default: false
+        transparent: false, // default: false
+        resolution: 1       // default: 1
+    }
+);
+    app.renderer.view.style.position = "absolute";
+    app.renderer.view.style.display = "block";
+    app.renderer.autoResize = true;
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+    //Add the canvas that Pixi automatically created for you to the HTML document
+    document.body.appendChild(app.view);
+
+        // load an image into local cache
+
+    loader
+        .add("inc/cat.png")
+        .load(setup);
+
+
+    let cat;
+
+    function setup() {
+        // create a sprite based on resource loaded above
+        cat = new Sprite(resources["inc/cat.png"].texture);
+
+        //Change the sprite's position
+        cat.position.set(96, 96);
+        cat.scale.set(2, 2);
+
+
+        //Add the cat sprite to the stage
+        app.stage.addChild(cat);
+
+        //Start the game loop by adding the `gameLoop` function to
+        //Pixi's `ticker` and providing it with a `delta` argument.
+        app.ticker.add(delta => gameLoop(delta));
+    }
+
+
+    function gameLoop(delta) {
+
+        //Move the cat 1 pixel 
+        cat.position.x += 1;
+    }
+
+
+    </script>
+</body>
+</html>

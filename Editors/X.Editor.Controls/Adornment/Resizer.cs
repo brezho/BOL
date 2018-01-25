@@ -13,9 +13,6 @@ namespace X.Editor.Controls.Adornment
     public class Resizer : IAdorner
     {
         const int GRIPS_SIZE = 6;
-        public Resizer()
-        {
-        }
 
         Dictionary<KnownPoint, Rectangle> _handles = null;
         Rectangle _borderLineArea;

@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using TerminalConfiguration;
-using TestModel.Editor.Controls;
+using X.Editor.Controls.Eto.Controls;
 using X.Editor.Model;
 
-namespace TestModel.Editor
+namespace X.Editor.Controls.Eto
 {
     public class TerminalConfigurationHierarchyProvider : IHierarchyProvider
     {
@@ -28,8 +31,7 @@ namespace TestModel.Editor
         {
             var terminalsFolder = this.AddFolder("Terminals");
             terminalsFolder.Commands.Add("New Terminal", () => configuration.Terminals.Add(new Terminal()));
-            //   terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new NullControl() { Dock = DockStyle.Fill });
-            terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new GdiLoopControl() { Dock = DockStyle.Fill });
+            terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new EditorExample() { Dock = DockStyle.Fill });
 
             configuration.Terminals.ItemAdded += (s, a) =>
             {

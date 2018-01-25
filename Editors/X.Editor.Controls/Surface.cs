@@ -55,7 +55,6 @@ namespace X.Editor.Controls
             }
             //else base.OnMouseDown(e);
         }
-
         Tuple<IAdorner, Cursor> GetHitTest(Point location)
         {
             if (focusedControl != null)
@@ -78,7 +77,6 @@ namespace X.Editor.Controls
             }
             return null;
         }
-       
 
         protected override void OnMouseLeave(EventArgs e)
         {
@@ -150,63 +148,77 @@ namespace X.Editor.Controls
         }
         private void Ctrl_Paint(object sender, PaintEventArgs e)
         {
-            InvalidateControl((Control)sender);
-            Invalidate();
+            if (sender == focusedControl) InvalidateControl();
         }
         private void Ctrl_LostFocus(object sender, EventArgs e)
         {
             focusedControl = null;
-            Invalidate();
+            InvalidateControl();
         }
         private void Ctrl_GotFocus(object sender, EventArgs e)
         {
-            InvalidateControl((Control)sender);
-            Invalidate();
+            focusedControl = (Control)sender;
+            InvalidateControl();
         }
         private void Ctrl_SizeChanged(object sender, EventArgs e)
         {
-            InvalidateControl((Control)sender);
+            if (sender == focusedControl) InvalidateControl();
         }
         private void Ctrl_LocationChanged(object sender, EventArgs e)
         {
-            InvalidateControl((Control)sender);
+            if (sender == focusedControl) InvalidateControl();
         }
 
         Control focusedControl;
         Bitmap bitmap;
         Rectangle bitmapLocation;
         Rectangle boundsUnion;
-        void InvalidateControl(Control target)
+        protected override CreateParams CreateParams
         {
-            focusedControl = target;
-            var affectedAdorners = _relations[focusedControl];
-            List<Rectangle> _newBounds = new List<Rectangle>();
-            foreach (var adoner in affectedAdorners)
+            get
             {
-                _newBounds.Add(adoner.GetRelativeBoundaries(focusedControl.Size));
+                CreateParams cp = base.CreateParams;
+              //  cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+              //  cp.Style &= ~0x02000000;  // Turn off WS_CLIPCHILDREN
+
+                return cp;
             }
-
-            boundsUnion = Rectangle.Empty;
-            foreach (var newBound in _newBounds) boundsUnion = Rectangle.Union(boundsUnion, newBound);
-
-            bitmapLocation = boundsUnion.Translate(focusedControl.Location.X, focusedControl.Location.Y);
-            bitmap = new Bitmap(boundsUnion.Width, boundsUnion.Height, PixelFormat.Format32bppArgb);
-
-
-            using (var gr = Graphics.FromImage(bitmap))
+        }
+        void InvalidateControl()
+        {
+            if (focusedControl != null)
             {
-                for (int i = 0; i < affectedAdorners.Length; i++)
+
+                var affectedAdorners = _relations[focusedControl];
+                List<Rectangle> _newBounds = new List<Rectangle>();
+                foreach (var adoner in affectedAdorners)
                 {
-                    var offset = new Point(_newBounds[i].X - boundsUnion.X, _newBounds[i].Y - boundsUnion.Y);
-                    affectedAdorners[i].PaintAt(gr, offset);
+                    _newBounds.Add(adoner.GetRelativeBoundaries(focusedControl.Size));
                 }
-            }
 
-            Invalidate();
+                boundsUnion = Rectangle.Empty;
+                foreach (var newBound in _newBounds) boundsUnion = Rectangle.Union(boundsUnion, newBound);
+
+                bitmapLocation = boundsUnion.Translate(focusedControl.Location.X, focusedControl.Location.Y);
+                bitmap = new Bitmap(boundsUnion.Width, boundsUnion.Height, PixelFormat.Format32bppPArgb);
+
+
+                using (var gr = Graphics.FromImage(bitmap))
+                {
+                    for (int i = 0; i < affectedAdorners.Length; i++)
+                    {
+                        var offset = new Point(_newBounds[i].X - boundsUnion.X, _newBounds[i].Y - boundsUnion.Y);
+                        affectedAdorners[i].PaintAt(gr, offset);
+                    }
+                }
+
+                Invalidate();
+
+            }
         }
         protected override void OnPaint(PaintEventArgs e)
         {
-            base.OnPaint(e);
+            //base.OnPaint(e);
             if (focusedControl != null)
             {
                 using (var ctrlGraphics = focusedControl.CreateGraphics())

@@ -15,6 +15,8 @@ namespace X.Editor.Controls.Adornment
         List<ConnectionPoint> _points = new List<ConnectionPoint>();
 
         Rectangle[] _connectors;
+        
+
         public Cursor GetHitTests(Point location)
         {
             return Cursors.Default;
@@ -30,14 +32,14 @@ namespace X.Editor.Controls.Adornment
                 _rectangles.Add(new Rectangle(loc, size));
             }
             _connectors = _rectangles.ToArray();
-            return new Rectangle(new Point(-ConnectorSize, -ConnectorSize), ctrlSize.Grow(2* ConnectorSize, 2* ConnectorSize));
+            return new Rectangle(new Point(-ConnectorSize, -ConnectorSize), ctrlSize.Grow(2 * ConnectorSize, 2 * ConnectorSize));
         }
 
 
         public void PaintAt(Graphics graphics, Point offset)
         {
             var offsets = _connectors.Select(x => x.Translate(offset.X, offset.Y)).ToArray();
-            foreach(var r in offsets) graphics.FillEllipse(Brushes.SkyBlue, r);
+            foreach (var r in offsets) graphics.FillEllipse(Brushes.SkyBlue, r);
 
             //graphics.FillRectangles(Brushes.SkyBlue, offsets);
         }

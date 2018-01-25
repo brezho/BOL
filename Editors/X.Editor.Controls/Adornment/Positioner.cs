@@ -15,7 +15,7 @@ namespace X.Editor.Controls.Adornment
         const int SIZE = 12;
         Rectangle handleArea;
 
-        public Positioner()
+        public Positioner() 
         {
             //  Control.Target.MouseMove += Target_MouseMove;
             handleArea = new Rectangle(new Point(0, 0), new Size(SIZE, SIZE));

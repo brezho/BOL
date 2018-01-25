@@ -30,7 +30,7 @@ namespace TestModel.Editor.Controls
         {
             Last = e;
         }
-        public TimedSerie(int frequency = 50) : this(TimeSpan.FromMilliseconds(1000 / frequency)) { }
+        public TimedSerie(int frequency = 25) : this(TimeSpan.FromMilliseconds(1000 / frequency)) { }
 
         public TimedSerie(TimeSpan reportingInterval)
         {

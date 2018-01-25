@@ -48,7 +48,7 @@ namespace X.Editor.Controls.Eto
         /// <summary>
         /// Rendering Form
         /// </summary>
-        public RenderForm View { get; private set; }
+        public RenderControl View { get; private set; }
 
         /// <summary>
         /// Indicate that device must be resized
@@ -75,7 +75,7 @@ namespace X.Editor.Controls.Eto
         /// </summary>
         /// <param name="form">Rendering form</param>
         /// <param name="debug">Active the debug mode</param>
-        public SharpDevice(RenderForm form, bool debug = false)
+        public SharpDevice(RenderControl form, bool debug = false)
         {
             View = form;
             // SwapChain description
@@ -108,7 +108,9 @@ namespace X.Editor.Controls.Eto
             factory.MakeWindowAssociation(View.Handle, WindowAssociationFlags.IgnoreAll);
 
             //Setup handler on resize form
-            View.UserResized += (sender, args) => MustResize = true;
+            View.Resize += (sender, args) => MustResize = true;
+            View.LocationChanged += (sender, args) => MustResize = true;
+            //  View.UserResized += (sender, args) => MustResize = true;
 
             //Set Default State
             SetDefaultRasterState();

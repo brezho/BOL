@@ -6,7 +6,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using X.Editor.Controls.Eto;
-namespace X.Editor.Controls.Eto.Controls
+using X.Editor.Controls.Gdi;
+
+namespace X.Editor.Controls.Controls
 {
     partial class X { }
     public class Oscilloscope : BufferedControl

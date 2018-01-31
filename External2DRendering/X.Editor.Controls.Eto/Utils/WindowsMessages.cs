@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace X.Editor.Controls.Eto.Utils
+namespace X.Editor.Controls.Utils
 {
     public enum WindowsMessage
     {

@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using X.Editor.Controls.Eto.Gdi;
+using X.Editor.Controls.Gdi;
 
-namespace X.Editor.Controls.Eto.Controls
+namespace X.Editor.Controls.Controls
 {
     partial class X { }
     public class TestGraph : BufferedControl

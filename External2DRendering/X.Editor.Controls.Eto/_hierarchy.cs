@@ -1,5 +1,5 @@
 ﻿using System.Windows.Forms;
-using X.Editor.Controls.Eto.Controls;
+using X.Editor.Controls.Utils;
 using X.Editor.Model;
 
 namespace X.Editor.Controls.Eto

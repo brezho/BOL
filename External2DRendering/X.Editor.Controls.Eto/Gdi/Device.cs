@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace X.Editor.Controls.Eto.Gdi
+namespace X.Editor.Controls.Gdi
 {
     public class GraphicsBuffer
     {

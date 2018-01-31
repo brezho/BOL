@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using X.Editor.Controls.Eto.Gdi;
+using X.Editor.Controls.Utils;
 
-namespace X.Editor.Controls.Eto.Controls
+namespace X.Editor.Controls.Gdi
 {
     partial class X { }
     public class BufferedControl : UserControl
@@ -22,7 +22,7 @@ namespace X.Editor.Controls.Eto.Controls
 
         public BufferedControl()
         {
-           // BorderStyle = BorderStyle.FixedSingle;
+            BorderStyle = BorderStyle.FixedSingle;
             fps = new SharpFPS();
             buffer = new GraphicsBuffer(Size);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);

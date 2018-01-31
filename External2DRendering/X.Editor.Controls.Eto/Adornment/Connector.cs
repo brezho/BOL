@@ -9,20 +9,19 @@ using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
-    public class Connector : IAdorner
+    public class Connector : AdornerBase
     {
         const int ConnectorSize = 8;
         List<ConnectionPoint> _points = new List<ConnectionPoint>();
 
         Rectangle[] _connectors;
-        
 
         public Cursor GetHitTests(Point location)
         {
             return Cursors.Default;
         }
 
-        public Rectangle GetRelativeBoundaries(Size ctrlSize)
+        public override Rectangle GetRelativeBoundaries(Size ctrlSize)
         {
             List<Rectangle> _rectangles = new List<Rectangle>();
             foreach (var cp in _points)
@@ -36,7 +35,7 @@ namespace X.Editor.Controls.Adornment
         }
 
 
-        public void PaintAt(Graphics graphics, Point offset)
+        public override void PaintAt(Graphics graphics, Point offset)
         {
             var offsets = _connectors.Select(x => x.Translate(offset.X, offset.Y)).ToArray();
             foreach (var r in offsets) graphics.FillEllipse(Brushes.SkyBlue, r);

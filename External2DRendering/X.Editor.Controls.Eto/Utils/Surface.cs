@@ -26,12 +26,6 @@ namespace X.Editor.Controls.Utils
 
         protected override void OnControlAdded(ControlEventArgs e)
         {
-            // TODO: Remove this
-            if (e.Control is Button)
-            {
-                this.Controls.Add(e.Control);
-                return;
-            }
             if (!(e.Control is SurfaceControlWrapper))
             {
                 this.Controls.Remove(e.Control);
@@ -75,11 +69,10 @@ namespace X.Editor.Controls.Utils
                 {
                     if (first == true)
                     {
-                        //Adorn<Resizer2>(t);
-                        //Adorn<Positioner>(t);
-                        //Adorn<Resizer>(b);
-                        //Adorn<Positioner>(b);
+                        Adorn<Resizer2>(t);
                         Adorn<Positioner2>(t);
+                        var connector = Adorn<Connector>(t);
+                        connector.Add("toto", new Point(20,20));
                         first = false;
                     }
                 }
@@ -110,8 +103,8 @@ namespace X.Editor.Controls.Utils
                 control.MouseMove += GuestMouseMove;
                 control.MouseUp += GuestMouseUp;
                 control.MouseDown += GuestMouseDown;
-                //control.MouseEnter += GuestMouseEnter;
-                //control.MouseLeave += GuestMouseLeave;
+                control.MouseEnter += GuestMouseEnter;
+                control.MouseLeave += GuestMouseLeave;
                 control.MouseClick += GuestMouseClick;
                 control.MouseDoubleClick += GuestMouseDoubleClick;
                 control.MouseWheel += GuestMouseWheel;
@@ -247,8 +240,8 @@ namespace X.Editor.Controls.Utils
                 adorner.EditorShell = this.container;
                 adorner.Wrapper = this;
 
-                adorners.Insert(0, adorner);
-                // adorners.Add(adorner);
+                // adorners.Insert(0, adorner);
+                adorners.Add(adorner);
                 adorner.CursorChanged += AdornerCursorChanged;
                 AdjustSizeAndPosition();
             }
@@ -257,58 +250,53 @@ namespace X.Editor.Controls.Utils
             {
                 Cursor = ((AdornerBase)sender).Cursor;
             }
-            int FindAdornerAtPosition(Point location)
+
+            int[] FindAdornersAtPosition(Point locationInThis)
             {
+                List<int> res = new List<int>();
                 for (var i = 0; i < adorners.Count; i++)
                 {
                     var adornerBounds = adornersBoundsRelativeToThis[i];
-                    if (adornerBounds.Contains(location)) return i;
+                    if (adornerBounds.Contains(locationInThis)) res.Add(i);
                 }
-                return -1;
-            }
-
-            void FowardMouseEventTo(Func<AdornerBase, GetGuestMouseEvent> getHandler, MouseEventArgs e)
-            {
-                var found = EnterLeaveCheck(e.Location);
-                if (found != -1)
-                {
-                    var adornerBounds = adornersBoundsRelativeToThis[found];
-                    var adornerMousePos = e.Location.Translate(-adornerBounds.X, -adornerBounds.Y);
-                    getHandler(adorners[found])(new MouseEventArgs(e.Button, e.Clicks, adornerMousePos.X, adornerMousePos.Y, e.Delta));
-                }
-            }
-
-            AdornerBase lastEntered = null;
-            int EnterLeaveCheck(Point location)
-            {
-                var found = FindAdornerAtPosition(location);
-                if (found == -1)
-                {
-                    if (lastEntered != null)
-                    {
-                        lastEntered.InternalMouseLeave(EventArgs.Empty);
-                        lastEntered = null;
-                    }
-                }
-                else
-                {
-                    var adorner = adorners[found];
-                    if (lastEntered != adorner)
-                    {
-                        if (lastEntered != null)
-                        {
-                            lastEntered.InternalMouseLeave(EventArgs.Empty);
-                            lastEntered = null;
-                        }
-
-                        lastEntered = adorner;
-                        adorner.InternalMouseEnter(EventArgs.Empty);
-                    }
-                }
-                return found;
+                return res.ToArray();
             }
 
             delegate void GetGuestMouseEvent(MouseEventArgs args);
+            void FowardMouseEventTo(Func<AdornerBase, GetGuestMouseEvent> getHandler, MouseEventArgs e)
+            {
+                var found = EnterLeaveCheck(e.Location);
+                if (found.Length > 0)
+                {
+                    foreach (var i in found)
+                    {
+                        var adornerBounds = adornersBoundsRelativeToThis[i];
+                        var adornerMousePos = e.Location.Translate(-adornerBounds.X, -adornerBounds.Y);
+                        getHandler(adorners[i])(new MouseEventArgs(e.Button, e.Clicks, adornerMousePos.X, adornerMousePos.Y, e.Delta));
+                    }
+                }
+            }
+
+            int[] alreadyEntered = null;
+            int[] EnterLeaveCheck(Point locationInThis)
+            {
+                int[] newEntrants;
+                var foundAtLocation = FindAdornersAtPosition(locationInThis);
+                if (alreadyEntered != null)
+                {
+                    var leavers = alreadyEntered.Except(foundAtLocation).ToArray();
+                    foreach (var ad in leavers) adorners[ad].InternalMouseLeave(EventArgs.Empty);
+                    newEntrants = foundAtLocation.Except(alreadyEntered).ToArray();
+                }
+                else newEntrants = foundAtLocation;
+
+                foreach (var ad in newEntrants) adorners[ad].InternalMouseEnter(EventArgs.Empty);
+
+                alreadyEntered = foundAtLocation;
+
+                return foundAtLocation;
+            }
+
 
             protected override void OnMouseMove(MouseEventArgs e)
             {
@@ -368,7 +356,7 @@ namespace X.Editor.Controls.Utils
             }
             protected override void OnMouseEnter(EventArgs e)
             {
-                //   EnterLeaveCheck(this.PointToClient(Control.MousePosition));
+                EnterLeaveCheck(this.PointToClient(Control.MousePosition));
                 base.OnMouseEnter(e);
             }
             void GuestMouseEnter(object sender, EventArgs e)
@@ -377,7 +365,7 @@ namespace X.Editor.Controls.Utils
             }
             protected override void OnMouseLeave(EventArgs e)
             {
-                //  EnterLeaveCheck(this.PointToClient(Control.MousePosition));
+                EnterLeaveCheck(this.PointToClient(Control.MousePosition));
                 base.OnMouseLeave(e);
             }
             void GuestMouseLeave(object sender, EventArgs e)

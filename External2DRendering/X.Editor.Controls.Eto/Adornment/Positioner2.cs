@@ -35,20 +35,15 @@ namespace X.Editor.Controls.Adornment
 
         protected override void OnMouseLeave(EventArgs e)
         {
-            EditorShell.Shell.TraceLine("Leave");
+            EditorShell.Shell.TraceLine("Leave  positioner");
             this.Cursor = Cursors.Default;
         }
 
         protected override void OnMouseEnter(EventArgs e)
         {
-            EditorShell.Shell.TraceLine("Enter");
+            EditorShell.Shell.TraceLine("Enter positioner");
             this.Cursor = Cursors.Hand;
         }
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            EditorShell.Shell.TraceLine("Mouve");
-            base.OnMouseMove(e);
-        }
-
+ 
     }
 }

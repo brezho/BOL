@@ -21,20 +21,24 @@ namespace X.Editor.Controls.Utils
         internal IEditorContainer EditorShell { get; set; }
         internal Surface.SurfaceControlWrapper Wrapper { get; set; }
 
-        public virtual Cursor GetHitTests(Point location)
-        {
-            return Cursors.Default;
-        }
-
         public abstract Rectangle GetRelativeBoundaries(Size ctrlSize);
 
         public virtual void PaintAt(Graphics graphics, Point offset)
         {
 
         }
-        internal void InternalMouseMove(MouseEventArgs e) { OnMouseMove(e); }
-        internal void InternalMouseEnter(EventArgs e) { OnMouseEnter(e); }
-        internal void InternalMouseLeave(EventArgs e) { OnMouseLeave(e); }
+        internal void InternalMouseMove(MouseEventArgs e)
+        {
+            OnMouseMove(e);
+        }
+        internal void InternalMouseEnter(EventArgs e)
+        {
+            OnMouseEnter(e);
+        }
+        internal void InternalMouseLeave(EventArgs e)
+        {
+            OnMouseLeave(e);
+        }
         internal void InternalMouseUp(MouseEventArgs e) { OnMouseUp(e); }
         internal void InternalMouseDown(MouseEventArgs e) { OnMouseDown(e); }
         internal void InternalMouseClick(MouseEventArgs e) { OnMouseClick(e); }

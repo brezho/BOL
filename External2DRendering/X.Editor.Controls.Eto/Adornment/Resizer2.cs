@@ -55,8 +55,17 @@ namespace X.Editor.Controls.Adornment
 
             graphics.FillRectangles(Brushes.Red, _handles.Values.Select(x => x.Translate(offset.X, offset.Y)).ToArray());
         }
+        protected override void OnMouseLeave(EventArgs e)
+        {
+            EditorShell.Shell.TraceLine("Leave  resizer");
+        }
 
-        public override Cursor GetHitTests(Point location)
+        protected override void OnMouseEnter(EventArgs e)
+        {
+            EditorShell.Shell.TraceLine("Enter resizer");
+        }
+
+        public Cursor GetHitTests(Point location)
         {
             foreach (var handle in _handles)
             {

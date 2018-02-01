@@ -10,16 +10,15 @@ using X.Editor.Controls.Gdi;
 namespace X.Editor.Controls.Controls
 {
     partial class X { }
-    public class Oscilloscope : BufferedControl
+    public class Oscilloscope2 : LoopControl
     {
-        TaskScheduler taskScheduler;
         const int margin = 10;
         List<int> points = new List<int>();
 
         object locker = new object();
 
         Color brushColor = Color.Green;
-        public Oscilloscope()
+        public Oscilloscope2()
         {
             Size = new System.Drawing.Size(300, 200);
 
@@ -28,9 +27,6 @@ namespace X.Editor.Controls.Controls
             {
                 points.Add(rnd.Next(0, 200));
             }
-
-
-            taskScheduler = TaskScheduler.FromCurrentSynchronizationContext();
 
             Task.Factory.StartNew(() =>
             {
@@ -126,9 +122,6 @@ namespace X.Editor.Controls.Controls
                 }
                 Graph.DrawString("FPS:" + FPS, new Font("Arial", 14), brush, 0, 12);
             }
-
-          Repaint();
-         
         }
     }
 }

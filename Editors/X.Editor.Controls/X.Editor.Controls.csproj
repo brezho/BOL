@@ -132,8 +132,10 @@
     <Compile Include="Adornment\Connector.cs" />
     <Compile Include="Adornment\Positioner.cs" />
     <Compile Include="Adornment\Resizer.cs" />
+    <Compile Include="Controls\Oscilloscope2.cs" />
     <Compile Include="Controls\Oscilloscope.cs" />
     <Compile Include="Controls\TestGraph.cs" />
+    <Compile Include="Gdi\LoopControl.cs" />
     <Compile Include="Gdi\BufferedControl.cs" />
     <Compile Include="Gdi\GraphicsBuffer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

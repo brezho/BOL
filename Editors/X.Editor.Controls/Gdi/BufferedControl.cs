@@ -22,7 +22,6 @@ namespace X.Editor.Controls.Gdi
 
         public BufferedControl()
         {
-            //    BorderStyle = BorderStyle.FixedSingle;
             fps = new SharpFPS();
             buffer = new GraphicsBuffer(Size);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
@@ -30,8 +29,13 @@ namespace X.Editor.Controls.Gdi
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
             fps.Reset();
-            this.Resize += (s, a) => buffer.Resize(Size);
             scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
+        }
+        protected override void OnResize(EventArgs e)
+        {
+            buffer.Resize(Size);
+            base.OnResize(e);
         }
 
         protected void Repaint()

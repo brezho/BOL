@@ -29,8 +29,8 @@ namespace X.Editor.Controls.Controls
                         Graph.DrawString(sleep.ToString(), f, Brushes.Red, 0, 20);
                         Graph.DrawString(FPS.ToString(), f, Brushes.Green, 0, 40);
                         Repaint();
-                        //   Thread.Sleep(1);
-                        Thread.Sleep(500);
+                        Thread.Sleep(3);
+                       //  Thread.Sleep(500);
                     }
                 }
             });

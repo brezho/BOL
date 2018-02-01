@@ -43,25 +43,11 @@ namespace X.Editor.Controls
             connector.Add("titi", new Point(12, 12));
         }
 
-        public override void Log(params object[] args)
-        {
-            base.Log(args);
-            if (args != null)
-            {
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (i % 2 == 0) container.Shell.Trace('[' + args[i]?.ToString() + ']');
-                    else container.Shell.Trace(args[i]?.ToString());
-                }
-            }
-            container.Shell.TraceLine();
-        }
-
         public void ActivateIn(IEditorContainer newWindow)
         {
             container = newWindow;
 
-            var oscillo = new Oscilloscope2();
+            var oscillo = new Oscilloscope();
             oscillo.Location = new Point(400, 400);
             this.Controls.Add(oscillo);
             Adorn(oscillo);
@@ -70,6 +56,30 @@ namespace X.Editor.Controls
             t.Location = new Point(200, 200);
             this.Controls.Add(t);
             Adorn(t);
+<<<<<<< HEAD
         }
+=======
+
+            //var b = new Button { Text = "Click", BackColor = Color.Beige, };
+            //b.Click += (s, a) =>
+            //{
+            //    t.Location = new Point(50, 50);
+            //    if (!first.HasValue) first = true;
+            //    else
+            //    {
+            //        if (first == true)
+            //        {
+            //            Adorn<Resizer2>(t);
+            //          //  Adorn<Positioner2>(t);
+            //            //var connector = Adorn<Connector>(t);
+            //            //connector.Add("toto", new Point(20, 20));
+            //            //first = false;
+            //        }
+            //    }
+            //};
+            //this.Controls.Add(b);
+        }
+
+>>>>>>> b11e5d0b7ddb6f1cb041063538f11b492feeca68
     }
 }

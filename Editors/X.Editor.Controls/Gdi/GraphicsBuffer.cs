@@ -15,6 +15,7 @@ namespace X.Editor.Controls.Gdi
         Graphics _graphics;
         bool _antiAliasing;
 
+        EventWaitHandle _waitHandle = new AutoResetEvent(false);
 
         public GraphicsBuffer(Size size)
         {

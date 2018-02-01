@@ -38,8 +38,8 @@ namespace X.Editor.Controls.Utils
             return result;
         }
 
-        public TSource[] Sources { get { return _relationship.Keys.ToArray(); } }
-        public TTarget[] Targets { get { return _reversedRelationship.Keys.ToArray(); } }
+        public TSource[] Sources { get { return _relationship.Keys.ToArray() ?? Array.Empty<TSource>(); } }
+        public TTarget[] Targets { get { return _reversedRelationship.Keys.ToArray() ?? Array.Empty<TTarget>(); } }
 
         public TTarget[] this[TSource source]
         {
@@ -48,7 +48,7 @@ namespace X.Editor.Controls.Utils
                 HashSet<TTarget> res = null;
                 _relationship.TryGetValue(source, out res);
                 if (res != null) return res.ToArray();
-                return null;
+                return Array.Empty<TTarget>();
             }
         }
         public TSource this[TTarget target]

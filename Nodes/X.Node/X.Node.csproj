@@ -9,8 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="X.Application" Version="1.0.0" />
-    <PackageReference Include="X.Web" Version="1.0.0" />
+    <PackageReference Include="X.Application" Version="1.0.0-r586" />
+    <PackageReference Include="X.Web" Version="1.0.0-r586" />
   </ItemGroup>
 
 

@@ -6,12 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace X.Editor.Controls
+namespace X.Editor.Controls.Utils
 {
     public interface IAdorner
     {
         Rectangle GetRelativeBoundaries(Size ctrlSize);
         void PaintAt(Graphics graphics, Point offset);
-        Cursor GetHitTests(Point location);
     }
 }

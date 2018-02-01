@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="X.Application" Version="1.0.0-r586" />
+    <PackageReference Include="X.Web" Version="1.0.0-r586" />
+  </ItemGroup>
+
+</Project>

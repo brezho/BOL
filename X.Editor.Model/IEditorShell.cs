@@ -26,6 +26,6 @@ namespace X.Editor.Model
     }
     public interface IEditor
     {
-        void ActivateIn(IEditorContainer newWindow);
+        void ActivateIn(IEditorContainer editor);
     }
 }

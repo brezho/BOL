@@ -13,11 +13,11 @@ namespace X.Editor.Controls.Gdi
     partial class X { }
     public class LoopControl : UserControl
     {
-        SharpFPS paintFPS;
+        CallsPerSecond paintFPS;
 
         GraphicsBuffer buffer;
 
-        public int FPS => paintFPS.FPS;
+        public int FPS => paintFPS.Count;
 
         private ThreadStart _threadStart;
         private Thread _thread;
@@ -34,7 +34,7 @@ namespace X.Editor.Controls.Gdi
             buffer = new GraphicsBuffer(Size);
 
 
-            paintFPS = new SharpFPS();
+            paintFPS = new CallsPerSecond();
             paintFPS.Reset();
 
             scheduler = TaskScheduler.FromCurrentSynchronizationContext();
@@ -70,7 +70,7 @@ namespace X.Editor.Controls.Gdi
         }
         protected sealed override void OnPaint(PaintEventArgs e)
         {
-            paintFPS.Update();
+            paintFPS.Increment();
             buffer.FlushTo(e.Graphics);
             base.OnPaint(e);
         }

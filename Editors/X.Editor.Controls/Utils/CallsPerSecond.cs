@@ -6,52 +6,39 @@ using System.Threading.Tasks;
 
 namespace X.Editor.Controls.Utils
 {
-    public class SharpFPS
+    public class CallsPerSecond
     {
-        /// <summary>
-        /// Last computed FPS
-        /// </summary>
-        public int FPS { get; private set; }
+        public int Count { get; private set; }
 
         private int n1;
         private long timeout;
 
         private System.Diagnostics.Stopwatch watch;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public SharpFPS()
+        
+        public CallsPerSecond()
         {
             watch = new System.Diagnostics.Stopwatch();
             Reset();
         }
 
-        /// <summary>
-        /// Reset Counter
-        /// </summary>
         public void Reset()
         {
             watch.Reset();
             n1 = 0;
             timeout = watch.ElapsedMilliseconds;
-            FPS = 0;
+            Count = 0;
             watch.Start();
         }
 
-        /// <summary>
-        /// Update counter. This must be executed every frame in render loop
-        /// </summary>
-        public void Update()
+        public void Increment()
         {
             n1++;
             if (watch.ElapsedMilliseconds - timeout >= 1000)
             {
-                FPS = n1;
+                Count = n1;
                 n1 = 0;
                 timeout = watch.ElapsedMilliseconds;
             }
         }
-
     }
 }

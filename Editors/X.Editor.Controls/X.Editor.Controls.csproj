@@ -144,7 +144,7 @@
     <Compile Include="Utils\ControlHelpers.cs" />
     <Compile Include="Utils\DrawingUtilities.cs" />
     <Compile Include="Utils\OneToManyRelationship.cs" />
-    <Compile Include="Utils\SharpFPS.cs" />
+    <Compile Include="Utils\CallsPerSecond.cs" />
     <Compile Include="Utils\Surface.cs" />
     <Compile Include="Utils\WindowsMessages.cs" />
     <Compile Include="_hierarchy.cs" />

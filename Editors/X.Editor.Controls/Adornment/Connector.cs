@@ -17,6 +17,7 @@ namespace X.Editor.Controls.Adornment
         const int ConnectorSize = 8;
         List<ConnectionPoint> _points = new List<ConnectionPoint>();
 
+        protected override int ZIndex => 100;
         public Connector(Surface surface, Control target) : base(surface, target)
         {
             this.Size = new Size(1, 1);
@@ -27,9 +28,7 @@ namespace X.Editor.Controls.Adornment
         {
             var connector = new ConnectionPoint(this, Surface, Target, connectorName, point);
             _points.Add(connector);
-            Surface.Controls.Add(connector);
-            connector.BringToFront();
-           // Surface.DrawArrow();
+            Surface.Adorn(Target, connector);
         }
 
         static class ConnectorGraphics
@@ -47,7 +46,6 @@ namespace X.Editor.Controls.Adornment
                         {
                             x.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
                         });
-                       // _buffer.Graphics.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
                     }
                     return _buffer;
                 }
@@ -101,6 +99,7 @@ namespace X.Editor.Controls.Adornment
         {
             Connector ConnectionManager { get; set; }
             List<Arrow> _arrows = new List<Arrow>();
+            protected override int ZIndex => 100;
 
             public ConnectionPoint(Connector parent, Surface surface, Control target, string name, Point location) : base(surface, target)
             {

@@ -11,10 +11,10 @@ using X.Editor.Controls.Gdi;
 namespace X.Editor.Controls.Controls
 {
     partial class X { }
-    public class TestGraph2 : LoopControl
+    public class TestGraph : LoopControl
     {
         Random rnd;
-        public TestGraph2()
+        public TestGraph()
         {
             Size = new System.Drawing.Size(200, 100);
             rnd = new Random();

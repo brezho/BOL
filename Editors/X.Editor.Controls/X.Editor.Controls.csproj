@@ -130,10 +130,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adornment\Connector.cs" />
+    <Compile Include="Adornment\Debugger.cs" />
     <Compile Include="Adornment\Positioner.cs" />
     <Compile Include="Adornment\Resizer.cs" />
-    <Compile Include="Controls\Oscilloscope2.cs" />
-    <Compile Include="Controls\TestGraph2.cs" />
+    <Compile Include="Controls\KnobControl.cs" />
+    <Compile Include="Controls\Oscilloscope.cs" />
+    <Compile Include="Controls\TestGraph.cs" />
     <Compile Include="Gdi\LoopControl.cs" />
     <Compile Include="Gdi\BufferedControl.cs" />
     <Compile Include="Gdi\GraphicsBuffer.cs" />

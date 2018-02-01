@@ -16,6 +16,10 @@ namespace X.Editor.Controls.Adornment
         const int GRIPS_SIZE = 6;
         const int MARGIN = 9; // 1.5 * GRIPS_SIZE
         GraphicsBuffer buffer;
+
+
+        protected override int ZIndex => -100;
+
         public Resizer(Surface surface, Control target) : base(surface, target)
         {
             buffer = new GraphicsBuffer(this.Size);

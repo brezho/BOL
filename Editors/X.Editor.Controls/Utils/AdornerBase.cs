@@ -15,6 +15,9 @@ namespace X.Editor.Controls.Utils
     {
         protected Surface Surface { get; private set; }
         protected Control Target { get; private set; }
+        protected virtual int ZIndex { get { return -1; } }
+        internal int RelativeZIndex { get { return ZIndex; } }
+
         public AdornerBase(Surface surface, Control target) : base()
         {
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);

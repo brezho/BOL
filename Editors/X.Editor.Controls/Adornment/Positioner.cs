@@ -13,6 +13,7 @@ namespace X.Editor.Controls.Adornment
     class Positioner : AdornerBase
     {
         const int SIZE = 12;
+        protected override int ZIndex => 100;
 
         public Positioner(Surface surface, Control target) : base(surface, target)
         {
@@ -43,6 +44,8 @@ namespace X.Editor.Controls.Adornment
         }
         protected override void OnMouseDown(MouseEventArgs e)
         {
+            Surface.BringToFront(Target);
+
             moving = true;
             moveStartLocation = e.Location;
             base.OnMouseDown(e);

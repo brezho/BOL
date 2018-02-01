@@ -24,11 +24,25 @@ namespace X.Editor.Controls.Utils
         {
             BackColor = Color.Black;
             Dock = DockStyle.Fill;
-      //      this.ControlAdded += GuestAdded;
+            //      this.ControlAdded += GuestAdded;
         }
 
         Control[] AllGuests { get { return _adornersByControl.Sources; } }
         AdornerBase[] AllAdorners { get { return _adornersByControl.Targets; } }
+
+        public AdornerBase[] GetAdornersOf(Control target)
+        {
+            return _adornersByControl[target];
+        }
+
+        public void BringToFront(Control control)
+        {
+            var adorners = _adornersByControl[control].OrderBy(x => x.RelativeZIndex).ToArray();
+            foreach (var adorner in adorners.Where(x => x.RelativeZIndex < 0)) adorner.BringToFront();
+            control.BringToFront();
+            foreach (var adorner in adorners.Where(x => x.RelativeZIndex >= 0)) adorner.BringToFront();
+        }
+
 
         public virtual void Log(params object[] args) { }
 
@@ -53,28 +67,35 @@ namespace X.Editor.Controls.Utils
         //}
         public T Adorn<T>(Control control) where T : AdornerBase
         {
-            var set = _oneTypeOfAdornerPerControl.GetOrAdd(typeof(T), new HashSet<Control>());
-            if (!set.Add(control)) throw new Exception("Control is already adorned with " + typeof(T).FullName);
+            //var set = _oneTypeOfAdornerPerControl.GetOrAdd(typeof(T), new HashSet<Control>());
+            //if (!set.Add(control)) throw new Exception("Control is already adorned with " + typeof(T).FullName);
 
             var adorner = typeof(T).Hype().GetOne<T>(this, control);
+            return Adorn(control, adorner);
+        }
+        public T Adorn<T>(Control control, T adorner) where T : AdornerBase
+        {
             _adornersByControl.Add(control, adorner);
 
             this.Controls.Add(adorner);
 
+            BringToFront(control);
             return adorner;
         }
+
+
 
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
-           // DrawArrow(e.Graphics);
+            // DrawArrow(e.Graphics);
         }
         public void DrawArrow(Graphics e)
         {
             //using (var pen = new Pen(Brushes.AliceBlue, 6))
             //{
             //    pen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
-                
+
             //    e.DrawLine(pen, new Point(10, 10), new Point(300, 300));
             //}
         }

@@ -37,8 +37,9 @@ namespace X.Editor.Controls
 
         void Adorn(Control ctrl)
         {
-            Adorn<Positioner>(ctrl);
             Adorn<Resizer>(ctrl);
+            Adorn<Positioner>(ctrl);
+            Adorn<Debugger>(ctrl);
             var connector = Adorn<Connector>(ctrl);
             connector.Add("titi", new Point(12, 12));
         }
@@ -61,12 +62,17 @@ namespace X.Editor.Controls
         {
             container = newWindow;
 
-            var oscillo = new Oscilloscope2();
+            var knob = new KnobControl();
+            knob.Location = new Point(0, 0);
+            this.Controls.Add(knob);
+            Adorn(knob);
+
+            var oscillo = new Oscilloscope();
             oscillo.Location = new Point(400, 400);
             this.Controls.Add(oscillo);
             Adorn(oscillo);
 
-            var t = new TestGraph2();
+            var t = new TestGraph();
             t.Location = new Point(200, 200);
             this.Controls.Add(t);
             Adorn(t);

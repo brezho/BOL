@@ -23,16 +23,16 @@ namespace X.Editor.Controls.Utils
                 ctrl.Location = target.Bounds.GetLocationOf(fromPoint).Translate(dx, dy);
             };
         }
-        public static void MakeSizeRelativeTo(this Control ctrl, Control target, int dw1, int dh1, int dw2, int dh2)
+        public static void MakeSizeRelativeTo(this Control ctrl, Control target, Point deltaSize)
         {
-            ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
+            ctrl.Size = target.Size.Grow(deltaSize);
             target.LocationChanged += (s, a) =>
             {
-                ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
+                ctrl.Size = target.Size.Grow(deltaSize);
             };
             target.SizeChanged += (s, a) =>
             {
-                ctrl.Size = target.Size.Grow(dw2 - dw1, dh2 - dh1);
+                ctrl.Size = target.Size.Grow(deltaSize);
             };
         }
         public static void IsVisibleOnFocusOf(this Control ctrl, Control target)

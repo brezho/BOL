@@ -51,12 +51,23 @@ namespace X.Editor.Controls.Adornment
                         //{ KnownPoint.Center, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
                     };
 
-            buffer.Graphics.Clear(Color.Black);
-            using (var p = new Pen(Brushes.Red, 1))
+            buffer.Draw(x =>
             {
-                buffer.Graphics.DrawRectangle(p, _border);
-                buffer.Graphics.FillRectangles(p.Brush, _handles.Values.ToArray());
-            }
+                x.Clear(Color.Black);
+                using (var p = new Pen(Brushes.Red, 1))
+                {
+                    x.DrawRectangle(p, _border);
+                    x.FillRectangles(p.Brush, _handles.Values.ToArray());
+                }
+            });
+
+
+            //buffer.Graphics.Clear(Color.Black);
+            //using (var p = new Pen(Brushes.Red, 1))
+            //{
+            //    buffer.Graphics.DrawRectangle(p, _border);
+            //    buffer.Graphics.FillRectangles(p.Brush, _handles.Values.ToArray());
+            //}
 
         }
 

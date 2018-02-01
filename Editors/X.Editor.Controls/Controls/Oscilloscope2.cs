@@ -18,7 +18,7 @@ namespace X.Editor.Controls.Controls
         object locker = new object();
 
         Color brushColor = Color.Green;
-        public Oscilloscope2()
+        public Oscilloscope2() : base()
         {
             Size = new System.Drawing.Size(300, 200);
 
@@ -33,7 +33,7 @@ namespace X.Editor.Controls.Controls
                 while (true)
                 {
                     Add(rnd.Next(0, 150));
-                    Thread.Sleep(3);
+                    Thread.Sleep(2);
                 }
             });
 
@@ -60,7 +60,7 @@ namespace X.Editor.Controls.Controls
                     points.RemoveRange(0, 100);
                 }
                 points.Add(value);
-                DoPaint();
+                Compute();
             }
         }
 
@@ -70,11 +70,18 @@ namespace X.Editor.Controls.Controls
             return (int)(ratio * (float)rangeMax);
         }
 
-        void DoPaint()
+
+
+        Point origin;
+        Point topLeft;
+        Point bottomRight;
+        Point[] pointsToDraw;
+
+        void Compute()
         {
-            var origin = new Point(margin, Height - margin);
-            var bottomRight = new Point(Width - margin, origin.Y);
-            var topLeft = new Point(origin.X, margin);
+            origin = new Point(margin, Height - margin);
+            bottomRight = new Point(Width - margin, origin.Y);
+            topLeft = new Point(origin.X, margin);
 
             var graphHeight = origin.Y - topLeft.Y;
             var graphWidth = bottomRight.X - origin.X;
@@ -107,21 +114,26 @@ namespace X.Editor.Controls.Controls
                 }
             }
 
-            var all = allPoints.ToArray();
+            pointsToDraw = allPoints.ToArray();
+        }
 
 
+        protected override void OnLoop(Graphics gr)
+        {
+            
             using (var brush = new SolidBrush(brushColor))
             using (var pen = new Pen(brush))
             {
-                Graph.Clear(Color.Black);
-                Graph.DrawLine(pen, origin, topLeft);
-                Graph.DrawLine(pen, origin, bottomRight);
-                if (all.Length > 1)
+                gr.Clear(Color.Black);
+                gr.DrawLine(pen, origin, topLeft);
+                gr.DrawLine(pen, origin, bottomRight);
+                if (pointsToDraw.Length > 1)
                 {
-                    Graph.DrawLines(pen, all);
+                    gr.DrawLines(pen, pointsToDraw);
                 }
-                Graph.DrawString("FPS:" + FPS, new Font("Arial", 14), brush, 0, 12);
+                gr.DrawString("FPS:" + FPS, new Font("Arial", 14), brush, 0, 12);
             }
+
         }
     }
 }

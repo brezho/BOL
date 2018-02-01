@@ -43,7 +43,11 @@ namespace X.Editor.Controls.Adornment
                     if (_buffer == null)
                     {
                         _buffer = new GraphicsBuffer(Size);
-                        _buffer.Graphics.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
+                        _buffer.Draw(x =>
+                        {
+                            x.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
+                        });
+                       // _buffer.Graphics.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
                     }
                     return _buffer;
                 }

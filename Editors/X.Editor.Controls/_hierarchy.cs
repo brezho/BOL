@@ -66,7 +66,7 @@ namespace X.Editor.Controls
             this.Controls.Add(oscillo);
             Adorn(oscillo);
 
-            var t = new TestGraph();
+            var t = new TestGraph2();
             t.Location = new Point(200, 200);
             this.Controls.Add(t);
             Adorn(t);

@@ -11,39 +11,49 @@ namespace X.Editor.Controls.Gdi
     public class GraphicsBuffer
     {
         Bitmap _dataBuffer;
-        Size _size;
         Graphics _graphics;
         bool _antiAliasing;
 
-        EventWaitHandle _waitHandle = new AutoResetEvent(false);
+        ManualResetEventSlim _waitHandle = new ManualResetEventSlim(false);
 
         public GraphicsBuffer(Size size)
         {
-            _size = size;
             _antiAliasing = true;
-            Init();
+            Init(size);
+            _waitHandle.Set();
         }
-        public Bitmap Buffer => _dataBuffer;
 
-        public Graphics Graphics
+        public void FlushTo(Graphics graphics)
         {
-            get
+            _waitHandle.Wait();
+            graphics.DrawImageUnscaled(_dataBuffer, 0, 0);
+            _waitHandle.Set();
+        }
+
+        public void Draw(Action<Graphics> drawingMethod)
+        {
+            _waitHandle.Wait();
+            try
             {
-                return _graphics;
+                drawingMethod(_graphics);
             }
+            catch { }
+            _waitHandle.Set();
         }
 
         public void Resize(Size size)
         {
-            Release();
-            _size = size;
-            Init();
+            _waitHandle.Wait();
+            Init(size);
+            _waitHandle.Set();
         }
 
-        void Init()
+        void Init(Size size)
         {
-            if (_size == Size.Empty) _size = new Size(1, 1); // return;
-            _dataBuffer = new Bitmap(_size.Width, _size.Height);
+            if (size == Size.Empty) size = new Size(1, 1);
+            Release();
+
+            _dataBuffer = new Bitmap(size.Width, size.Height);
             _graphics = Graphics.FromImage(_dataBuffer);
 
             // Antialiased Polygons and Text?
@@ -59,11 +69,6 @@ namespace X.Editor.Controls.Gdi
             _graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half;
         }
 
-        public void FlushTo(Graphics graphics)
-        {
-       //     graphics.Clear(Color.Black);
-            graphics.DrawImageUnscaled(_dataBuffer, 0, 0);
-        }
 
         void Release()
         {

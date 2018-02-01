@@ -14,56 +14,59 @@ namespace X.Editor.Controls.Gdi
     public class LoopControl : UserControl
     {
         SharpFPS paintFPS;
-        SharpFPS loopFPS;
+
         GraphicsBuffer buffer;
 
-
-        protected Graphics Graph => buffer.Graphics;
         public int FPS => paintFPS.FPS;
 
         private ThreadStart _threadStart;
         private Thread _thread;
-        private SynchronizationContext _synchronizationContext;
         TaskScheduler scheduler;
+
         public LoopControl()
         {
-            paintFPS = new SharpFPS();
-            loopFPS = new SharpFPS();
 
-            buffer = new GraphicsBuffer(Size);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            SetStyle(ControlStyles.UserPaint, false);
             this.DoubleBuffered = true;
+
+            buffer = new GraphicsBuffer(Size);
+
+
+            paintFPS = new SharpFPS();
             paintFPS.Reset();
 
-            _synchronizationContext = WindowsFormsSynchronizationContext.Current;
+            scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+
             _threadStart = new ThreadStart(LongProcess);
             _thread = new Thread(_threadStart);
             _thread.Start();
 
-
-               scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-            //Task.Factory.StartNew(() =>
-            //{
-            //    while (!IsDisposed)
-            //    {
-            //        Task.Factory.StartNew(() => Refresh(), CancellationToken.None, TaskCreationOptions.None, scheduler);
-            //        Thread.Sleep(3);
-            //    }
-            //});
         }
+        protected override void OnResize(EventArgs e)
+        {
+            buffer.Resize(Size);
+            base.OnResize(e);
+        }
+
         void LongProcess()
         {
-            while(!IsDisposed)
+            while (!IsDisposed)
             {
-                loopFPS.Update();
-                Task.Factory.StartNew(() => Refresh(), CancellationToken.None, TaskCreationOptions.None, scheduler);
-
-               // _synchronizationContext.Post((o) => Refresh(), null);
-                Thread.Sleep(3);
+                buffer.Draw(OnLoop);
+                Task.Factory.StartNew(() =>
+                   {
+                       Refresh();
+                       Application.DoEvents();
+                   }, CancellationToken.None, TaskCreationOptions.None, scheduler)
+                   .Wait();
             }
+        }
+
+        protected virtual void OnLoop(Graphics graphics)
+        {
+
         }
         protected sealed override void OnPaint(PaintEventArgs e)
         {

@@ -13,24 +13,21 @@ namespace X.Editor.Controls.Gdi
     partial class X { }
     public class BufferedControl : UserControl
     {
-        SharpFPS fps;
         GraphicsBuffer buffer;
-        TaskScheduler scheduler;
-
-        protected Graphics Graph => buffer.Graphics;
-        public int FPS => fps.FPS;
 
         public BufferedControl()
         {
-            fps = new SharpFPS();
             buffer = new GraphicsBuffer(Size);
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.ResizeRedraw, true);
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
             this.DoubleBuffered = true;
-            fps.Reset();
-            scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        }
 
+        void Draw(Action<Graphics> drawingMethod)
+        {
+            buffer.Draw(drawingMethod);
+            Refresh();
         }
         protected override void OnResize(EventArgs e)
         {
@@ -38,13 +35,8 @@ namespace X.Editor.Controls.Gdi
             base.OnResize(e);
         }
 
-        protected void Repaint()
+        protected sealed override void OnPaint(PaintEventArgs e)
         {
-            Task.Factory.StartNew(() => Refresh(), CancellationToken.None, TaskCreationOptions.None, scheduler);
-        }
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            fps.Update();
             buffer.FlushTo(e.Graphics);
             base.OnPaint(e);
         }

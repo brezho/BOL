@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -21,6 +22,17 @@ namespace X.Editor.Controls.Gdi
             _antiAliasing = true;
             Init(size);
             _waitHandle.Set();
+        }
+
+        public Bitmap Copy()
+        {
+            _waitHandle.Wait();
+            Bitmap clone = (Bitmap)_dataBuffer.Clone();
+            BitmapData data = clone.LockBits(new Rectangle(0, 0, clone.Width, clone.Height), ImageLockMode.ReadOnly, clone.PixelFormat);
+            clone.UnlockBits(data);
+            //var clone = new Bitmap(_dataBuffer);
+            _waitHandle.Set();
+            return clone;
         }
 
         public void FlushTo(Graphics graphics)

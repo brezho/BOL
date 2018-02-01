@@ -1,7 +1,10 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using X.Editor.Controls.Adornment;
 using X.Editor.Controls.Controls;
+using X.Editor.Controls.Gdi;
 using X.Editor.Controls.Utils;
 using X.Editor.Model;
 
@@ -34,6 +37,13 @@ namespace X.Editor.Controls
     public class MySurface : Surface, IEditor
     {
         IEditorContainer container;
+        ShapeCollection Shapes = new ShapeCollection();
+        GraphicsBuffer buffer;
+
+        public MySurface()
+        {
+            buffer = new GraphicsBuffer(Size);
+        }
 
         void Adorn(Control ctrl)
         {
@@ -76,6 +86,37 @@ namespace X.Editor.Controls
             t.Location = new Point(200, 200);
             this.Controls.Add(t);
             Adorn(t);
+
+            Shapes.Add(new Quadrilatere());
+            Shapes.Add(new Figure());
+        }
+        protected override void OnResize(EventArgs e)
+        {
+            buffer.Resize(Size);
+            base.OnResize(e);
+        }
+
+        protected override void OnPaint(PaintEventArgs e)
+        {
+            buffer.Draw((gr) =>
+            {
+                gr.Clear(Color.Transparent);
+                foreach (var sh in Shapes)
+                {
+                    sh.Draw(gr);
+                }
+            });
+
+            //var copy = buffer.Copy();
+            //e.Graphics.DrawImageUnscaled(copy,0,0);
+
+            //e.Graphics.DrawImageUnscaled(copy, e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
+
+            // buffer.FlushTo(e.Graphics);
+            base.OnPaint(e);
+
+            e.Graphics.SetClip(Shapes.Bounds);
+            buffer.FlushTo(e.Graphics);
         }
     }
 }

@@ -27,11 +27,9 @@ namespace TestModel.Editor
         void BindRoot()
         {
             var terminalsFolder = this.AddFolder("Terminals");
-
             terminalsFolder.Commands.Add("New Terminal", () => configuration.Terminals.Add(new Terminal()));
-
-            terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new NullControl() { Dock = DockStyle.Fill });
-            //terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new Oscilloscope());
+            //   terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new NullControl() { Dock = DockStyle.Fill });
+            terminalsFolder.RegisterEditorBuilder(typeof(Control), () => new GdiLoopControl() { Dock = DockStyle.Fill });
 
             configuration.Terminals.ItemAdded += (s, a) =>
             {

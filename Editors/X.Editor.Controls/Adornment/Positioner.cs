@@ -9,78 +9,54 @@ using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
-    class PositionerX { }
-    public class Positioner : IAdorner
+    partial class X { }
+    class Positioner : AdornerBase
     {
         const int SIZE = 12;
-        Rectangle handleArea;
 
-        public Positioner()
+        public Positioner(Surface surface, Control target) : base(surface, target)
         {
-            //  Control.Target.MouseMove += Target_MouseMove;
-            handleArea = new Rectangle(new Point(0, 0), new Size(SIZE, SIZE));
+            BackColor = Color.Yellow;
+            Size = new Size(SIZE, SIZE);
+            this.MakeLocationRelativeTo(target, SIZE / 3, 0, KnownPoint.TopRight);
         }
 
-        public Rectangle GetRelativeBoundaries(Size ctrlSize)
+        protected override void OnMouseLeave(EventArgs e)
         {
-            return handleArea.Translate(ctrlSize.Width + SIZE / 3, 0);
+            this.Cursor = Cursors.Default;
+            base.OnMouseLeave(e);
         }
 
-        public void PaintAt(Graphics graphics, Point offset)
+        protected override void OnMouseEnter(EventArgs e)
         {
-            graphics.FillRectangle(Brushes.Yellow, handleArea.Translate(offset.X, offset.Y));
+            this.Cursor = Cursors.Hand;
+            base.OnMouseEnter(e);
         }
-
-        public Cursor GetHitTests(Point location)
-        {
-            if (handleArea.Contains(location)) return Cursors.Hand;
-            return Cursors.Default;
-        }
-
-        private void Target_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (moving)
-            {
-                // Get the difference between the two points
-                int xDiff = e.Location.X - moveStartLocation.X;
-                int yDiff = e.Location.Y - moveStartLocation.Y;
-                //     Control.Target.Location = Control.Target.Location.Translate(xDiff, yDiff);
-            }
-        }
-
-        //internal Positioner(Surface surface, Control target) 
-        //{
-        //    Surface = surface;
-        //    Target = target;
-        //    this.Size = new Size(SIZE, SIZE);
-        //    BackColor = Color.Yellow;
-        //    this.MakeLocationRelativeTo(target, 2, 0, KnownPoint.TopRight);
-        //}
 
         bool moving = false;
         Point moveStartLocation;
 
+        protected override void OnMouseUp(MouseEventArgs e)
+        {
+            moving = false;
+            base.OnMouseUp(e);
+        }
+        protected override void OnMouseDown(MouseEventArgs e)
+        {
+            moving = true;
+            moveStartLocation = e.Location;
+            base.OnMouseDown(e);
+        }
+        protected override void OnMouseMove(MouseEventArgs e)
+        {
+            if (moving)
+            {
+                // Get the difference between the two points
+                var delta = e.Location.Delta(moveStartLocation);
+                Target.Location = Target.Location.Translate(delta);
+            }
 
-
-        //protected override void OnMouseLeave(EventArgs e)
-        //{
-        //    this.Cursor = Cursors.Default;
-        //}
-
-        //protected override void OnMouseEnter(EventArgs e)
-        //{
-        //    this.Cursor = Cursors.Hand;
-        //}
-
-        //protected override void OnMouseUp(MouseEventArgs e)
-        //{
-        //    moving = false;
-        //}
-        //protected override void OnMouseDown(MouseEventArgs e)
-        //{
-        //    moving = true;
-        //    moveStartLocation = e.Location;
-        //}
-
+            base.OnMouseMove(e);
+        }
     }
 }

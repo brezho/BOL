@@ -5,52 +5,74 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using X.Editor.Controls.Gdi;
 using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
-    public class Connector : IAdorner
+    partial class X { }
+    public class Connector : AdornerBase
     {
         const int ConnectorSize = 8;
         List<ConnectionPoint> _points = new List<ConnectionPoint>();
 
-        Rectangle[] _connectors;
-        public Cursor GetHitTests(Point location)
+        public Connector(Surface surface, Control target) : base(surface, target)
         {
-            return Cursors.Default;
+            this.Size = new Size(1, 1);
+            this.MakeLocationRelativeTo(target, 0, 0);
         }
 
-        public Rectangle GetRelativeBoundaries(Size ctrlSize)
+        public void Add(string connectorName, Point point)
         {
-            List<Rectangle> _rectangles = new List<Rectangle>();
-            foreach (var cp in _points)
+            var connector = new ConnectionPoint(Surface, Target, connectorName, point);
+            _points.Add(connector);
+            Surface.Controls.Add(connector);
+            connector.BringToFront();
+        }
+
+        static class ConnectorGraphics
+        {
+            public static readonly Size Size = new Size(12, 12);
+            static GraphicsBuffer _buffer;
+            public static GraphicsBuffer Buffer
             {
-                var loc = Point.Empty.Translate(cp.Location.X, cp.Location.Y);
-                var size = new Size(ConnectorSize, ConnectorSize);
-                _rectangles.Add(new Rectangle(loc, size));
+                get
+                {
+                    if (_buffer == null)
+                    {
+                        _buffer = new GraphicsBuffer(Size);
+                        _buffer.Graphics.FillEllipse(Brushes.SkyBlue, new Rectangle(Point.Empty, Size));
+                    }
+                    return _buffer;
+                }
             }
-            _connectors = _rectangles.ToArray();
-            return new Rectangle(new Point(-ConnectorSize, -ConnectorSize), ctrlSize.Grow(2* ConnectorSize, 2* ConnectorSize));
         }
 
-
-        public void PaintAt(Graphics graphics, Point offset)
+        class ConnectionPoint : AdornerBase
         {
-            var offsets = _connectors.Select(x => x.Translate(offset.X, offset.Y)).ToArray();
-            foreach(var r in offsets) graphics.FillEllipse(Brushes.SkyBlue, r);
 
-            //graphics.FillRectangles(Brushes.SkyBlue, offsets);
-        }
+            public ConnectionPoint(Surface surface, Control target, string name, Point location) : base(surface, target)
+            {
+                Name = name;
+                Size = ConnectorGraphics.Size;
+                this.MakeLocationRelativeTo(target, location.X, location.Y);
+            }
 
-        public void Add(string v, Point point)
-        {
-            _points.Add(new ConnectionPoint() { Name = v, Location = point });
-        }
-
-        class ConnectionPoint
-        {
-            public string Name;
-            public Point Location;
+            protected override void OnMouseEnter(EventArgs e)
+            {
+                Cursor = Cursors.Cross;
+                base.OnMouseEnter(e);
+            }
+            protected override void OnMouseLeave(EventArgs e)
+            {
+                Cursor = Cursors.Default;
+                base.OnMouseLeave(e);
+            }
+            protected override void OnPaint(PaintEventArgs e)
+            {
+                ConnectorGraphics.Buffer.FlushTo(e.Graphics);
+                base.OnPaint(e);
+            }
         }
     }
 }

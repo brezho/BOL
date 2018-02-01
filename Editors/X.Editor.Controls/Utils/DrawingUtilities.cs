@@ -44,23 +44,51 @@ namespace X.Editor.Controls.Utils
         {
             return rectangle.Size.GetLocationOf(ofPoint).Translate(rectangle.X, rectangle.Y);
         }
+
+        public static Point Delta(this Point destination, Point source)
+        {
+            return new Point(destination.X - source.X, destination.Y - source.Y);
+        }
+        //public static Point Delta(this Rectangle destination, Rectangle source)
+        //{
+        //    return Delta(destination.Location, source.Location);
+        //}
+
+        public static Point Translate(this Point source, Point delta)
+        {
+            return new Point(source.X + delta.X, source.Y + delta.Y);
+        }
         public static Point Translate(this Point source, int dx, int dy)
         {
-            var newOne = new Point(source.X, source.Y);
-            newOne.Offset(dx, dy);
-            return newOne;
+            return new Point(source.X + dx, source.Y + dy);
         }
         public static Rectangle Translate(this Rectangle source, int dx, int dy)
         {
             return new Rectangle(source.Location.Translate(dx, dy), source.Size);
         }
+        public static Rectangle Translate(this Rectangle source, Point delta)
+        {
+            return new Rectangle(source.Location.Translate(delta), source.Size);
+        }
         public static Size Grow(this Size source, int dw, int dh)
         {
             return new Size(source.Width + dw, source.Height + dh);
         }
+        public static Size Grow(this Size source, Point deltaSize)
+        {
+            return new Size(source.Width + deltaSize.X, source.Height + deltaSize.Y);
+        }
         public static Rectangle Grow(this Rectangle source, int dw, int dh)
         {
             return Grow(source, KnownPoint.BottomRight, dw, dh);
+        }
+        public static Rectangle Grow(this Rectangle source, Point deltaSize)
+        {
+            return Grow(source, KnownPoint.BottomRight, deltaSize.X, deltaSize.Y);
+        }
+        public static Rectangle Grow(this Rectangle source, KnownPoint draggedPoint, Point deltaSize)
+        {
+            return Grow(source, draggedPoint, deltaSize.X, deltaSize.Y);
         }
         public static Rectangle Grow(this Rectangle source, KnownPoint draggedPoint, int dw, int dh)
         {

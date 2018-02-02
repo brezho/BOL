@@ -24,15 +24,20 @@ namespace X.Editor.Controls.Utils
         {
             BackColor = Color.Black;
             Dock = DockStyle.Fill;
-            //      this.ControlAdded += GuestAdded;
+            this.ControlAdded += GuestAdded;
         }
 
         Control[] AllGuests { get { return _adornersByControl.Sources; } }
         AdornerBase[] AllAdorners { get { return _adornersByControl.Targets; } }
 
-        public AdornerBase[] GetAdornersOf(Control target)
+        protected AdornerBase[] GetAdornersOf(Control target)
         {
             return _adornersByControl[target];
+        }
+
+        public IEnumerable<AdornerBase> GetAdornersAt(Point location)
+        {
+            return AllAdorners.Where(y => y.Bounds.Contains(location));
         }
 
         public void BringToFront(Control control)
@@ -46,25 +51,25 @@ namespace X.Editor.Controls.Utils
 
         public virtual void Log(params object[] args) { }
 
-        //private void GuestAdded(object sender, ControlEventArgs e)
-        //{
-        //    if (!(e.Control is AdornerBase))
-        //    {
-        //        var guest = e.Control;
+        private void GuestAdded(object sender, ControlEventArgs e)
+        {
+            if (!(e.Control is AdornerBase))
+            {
+                var guest = e.Control;
 
-        //        guest.SizeChanged += GuestSizeChanged;
-        //        guest.LocationChanged += GuestLocationChanged;
-        //        guest.Paint += GuestPaint;
-        //        guest.MouseMove += GuestMouseMove;
-        //        guest.MouseUp += GuestMouseUp;
-        //        guest.MouseDown += GuestMouseDown;
-        //        guest.MouseEnter += GuestMouseEnter;
-        //        guest.MouseLeave += GuestMouseLeave;
-        //        guest.MouseClick += GuestMouseClick;
-        //        guest.MouseDoubleClick += GuestMouseDoubleClick;
-        //        guest.MouseWheel += GuestMouseWheel;
-        //    }
-        //}
+                //guest.SizeChanged += GuestSizeChanged;
+                //guest.LocationChanged += GuestLocationChanged;
+                guest.Paint += OnGuestPaint;
+                //guest.MouseMove += GuestMouseMove;
+                //guest.MouseUp += GuestMouseUp;
+                //guest.MouseDown += GuestMouseDown;
+                //guest.MouseEnter += GuestMouseEnter;
+                //guest.MouseLeave += GuestMouseLeave;
+                //guest.MouseClick += GuestMouseClick;
+                //guest.MouseDoubleClick += GuestMouseDoubleClick;
+                //guest.MouseWheel += GuestMouseWheel;
+            }
+        }
         public T Adorn<T>(Control control) where T : AdornerBase
         {
             //var set = _oneTypeOfAdornerPerControl.GetOrAdd(typeof(T), new HashSet<Control>());
@@ -83,22 +88,6 @@ namespace X.Editor.Controls.Utils
             return adorner;
         }
 
-
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            base.OnPaint(e);
-            // DrawArrow(e.Graphics);
-        }
-        public void DrawArrow(Graphics e)
-        {
-            //using (var pen = new Pen(Brushes.AliceBlue, 6))
-            //{
-            //    pen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor;
-
-            //    e.DrawLine(pen, new Point(10, 10), new Point(300, 300));
-            //}
-        }
 
         //void GuestLocationChanged(object sender, EventArgs e)
         //{
@@ -153,10 +142,10 @@ namespace X.Editor.Controls.Utils
         //    var guest = (Control)sender;
         //    OnMouseEnter(e);
         //}
-        //void GuestPaint(object sender, PaintEventArgs e)
-        //{
+        protected virtual void OnGuestPaint(object sender, PaintEventArgs e)
+        {
 
-        //}
+        }
 
 
         //protected override void OnMouseMove(MouseEventArgs e)

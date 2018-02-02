@@ -24,6 +24,7 @@ namespace X.Editor.Controls.Controls
         {
             using (var f = new Font("Arial", 14))
             {
+                gr.Clear(Color.Black);
                 gr.DrawString(rnd.Next(2, 50).ToString(), f, Brushes.Red, 0, 20);
                 gr.DrawString(FPS.ToString(), f, Brushes.Green, 0, 40);
             }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,67 +12,54 @@ using X.Editor.Controls.Utils;
 namespace X.Editor.Controls.Adornment
 {
     partial class X { }
+
     public class Resizer : AdornerBase
     {
         const int GRIPS_SIZE = 6;
         const int MARGIN = 9; // 1.5 * GRIPS_SIZE
-        GraphicsBuffer buffer;
-
-
         protected override int ZIndex => -100;
 
         public Resizer(Surface surface, Control target) : base(surface, target)
         {
-            buffer = new GraphicsBuffer(this.Size);
             this.MakeLocationRelativeTo(target, -MARGIN, -MARGIN, KnownPoint.TopLeft);
             this.MakeSizeRelativeTo(target, new Point(2 * MARGIN, 2 * MARGIN));
         }
 
         protected override void OnSizeChanged(EventArgs e)
         {
-            buffer.Resize(this.Size);
             RecomputeLocations();
             base.OnSizeChanged(e);
         }
 
-        Dictionary<KnownPoint, Rectangle> _handles = null;
+        List<KeyValuePair<KnownPoint, Rectangle>> handles = null;
+        Rectangle border;
 
+        GraphicsPath borderPath;
+        GraphicsPath[] handlesPath;
         void RecomputeLocations()
         {
-            var _border = Rectangle.Empty.Translate(GRIPS_SIZE / 2, GRIPS_SIZE / 2).Grow(Target.Width + 2 * GRIPS_SIZE, Target.Height + 2 * GRIPS_SIZE);
-
+            border = Rectangle.Empty.Translate(GRIPS_SIZE / 2, GRIPS_SIZE / 2).Grow(Target.Width + 2 * GRIPS_SIZE, Target.Height + 2 * GRIPS_SIZE);
             var gripsSize = new Size(GRIPS_SIZE, GRIPS_SIZE);
-            var gripsAlignedTo = _border.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
-            _handles = new Dictionary<KnownPoint, Rectangle>()
-                    {
-                        { KnownPoint.TopLeft , new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopLeft), gripsSize)},
-                        { KnownPoint.TopMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopMiddle), gripsSize) },
-                        { KnownPoint.TopRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopRight), gripsSize)},
-                        { KnownPoint.MiddleRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleRight), gripsSize)},
-                        { KnownPoint.BottomRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomRight), gripsSize)},
-                        { KnownPoint.BottomMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)},
-                        { KnownPoint.BottomLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)},
-                        { KnownPoint.MiddleLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize)},
-                        //{ KnownPoint.Center, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
-                    };
+            var gripsAlignedTo = border.Translate(-GRIPS_SIZE / 2, -GRIPS_SIZE / 2);
+            handles = new List<KeyValuePair<KnownPoint, Rectangle>>(
+                new[] {
+                       new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.TopLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopLeft), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.TopMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopMiddle), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.TopRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.TopRight), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.MiddleRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleRight), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.BottomRight, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomRight), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.BottomMiddle, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomMiddle), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.BottomLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.BottomLeft), gripsSize)),
+                        new KeyValuePair<KnownPoint, Rectangle>(KnownPoint.MiddleLeft, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.MiddleLeft), gripsSize))
+                    //  { KnownPoint.Center, new Rectangle(gripsAlignedTo.GetLocationOf(KnownPoint.Center), gripsSize)},
+                    });
 
-            buffer.Draw(x =>
-            {
-                x.Clear(Color.Black);
-                using (var p = new Pen(Brushes.Red, 1))
-                {
-                    x.DrawRectangle(p, _border);
-                    x.FillRectangles(p.Brush, _handles.Values.ToArray());
-                }
-            });
+            borderPath = new GraphicsPath();
+            borderPath.AddRectangle(border);
 
+            handlesPath = handles.Select(y => { var r = new GraphicsPath(); r.AddRectangle(y.Value); return r; }).ToArray();
 
-            //buffer.Graphics.Clear(Color.Black);
-            //using (var p = new Pen(Brushes.Red, 1))
-            //{
-            //    buffer.Graphics.DrawRectangle(p, _border);
-            //    buffer.Graphics.FillRectangles(p.Brush, _handles.Values.ToArray());
-            //}
+            
 
         }
 
@@ -83,7 +71,7 @@ namespace X.Editor.Controls.Adornment
         {
             if (!isResizing)
             {
-                currentlyHoveredGrip = _handles.FirstOrDefault(x => x.Value.Contains(e.Location)).Key;
+                currentlyHoveredGrip = handles.FirstOrDefault(x => x.Value.Contains(e.Location)).Key;
 
                 switch (currentlyHoveredGrip)
                 {
@@ -143,9 +131,21 @@ namespace X.Editor.Controls.Adornment
             isResizing = false;
         }
 
+
+        static Pen redPen = new Pen(Brushes.Red, 1);
         protected override void OnPaint(PaintEventArgs e)
         {
-            buffer.FlushTo(e.Graphics);
+            if (e.ClipRectangle.IntersectsWith(border))
+            {
+                e.Graphics.DrawPath(redPen, borderPath);
+            }
+            for (int i = 0; i < handles.Count; i++)
+            {
+                if (handles[i].Value.IntersectsWith(e.ClipRectangle))
+                {
+                    e.Graphics.FillPath(redPen.Brush, handlesPath[i]);
+                }
+            }
             base.OnPaint(e);
         }
     }

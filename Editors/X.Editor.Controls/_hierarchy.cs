@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using X.Editor.Controls.Adornment;
 using X.Editor.Controls.Controls;
@@ -37,7 +39,6 @@ namespace X.Editor.Controls
     public class MySurface : Surface, IEditor
     {
         IEditorContainer container;
-        ShapeCollection Shapes = new ShapeCollection();
         GraphicsBuffer buffer;
 
         public MySurface()
@@ -47,25 +48,31 @@ namespace X.Editor.Controls
 
         void Adorn(Control ctrl)
         {
-            Adorn<Resizer>(ctrl);
-            Adorn<Positioner>(ctrl);
-            Adorn<Debugger>(ctrl);
-            var connector = Adorn<Connector>(ctrl);
-            connector.Add("titi", new Point(12, 12));
+            var positioner = Adorn<Positioner>(ctrl);
+            positioner.IsVisibleOnFocusOf(ctrl);
+
+            var resizer = Adorn<Resizer>(ctrl);
+            resizer.IsVisibleOnFocusOf(ctrl);
+
+            var debugger = Adorn<Debugger>(ctrl);
+            debugger.IsVisibleOnFocusOf(ctrl);
+
         }
 
         public override void Log(params object[] args)
         {
-            base.Log(args);
+            var str = new StringBuilder();
             if (args != null)
             {
                 for (int i = 0; i < args.Length; i++)
                 {
-                    if (i % 2 == 0) container.Shell.Trace('[' + args[i]?.ToString() + ']');
-                    else container.Shell.Trace(args[i]?.ToString());
+                    if (i % 2 == 0) str.Append('[' + args[i]?.ToString() + ']');
+                    else str.Append(args[i]?.ToString());
                 }
             }
-            container.Shell.TraceLine();
+            container.Shell.TraceLine(str.ToString());
+            System.Diagnostics.Trace.WriteLine(str.ToString());
+            base.Log(args);
         }
 
         public void ActivateIn(IEditorContainer newWindow)
@@ -77,46 +84,27 @@ namespace X.Editor.Controls
             this.Controls.Add(knob);
             Adorn(knob);
 
+            Adorn<Connector>(knob).Add("knobOut", new Point(12, 12), Color.SkyBlue);
+
+
             var oscillo = new Oscilloscope();
             oscillo.Location = new Point(400, 400);
             this.Controls.Add(oscillo);
             Adorn(oscillo);
+
+             Adorn<Connector>(oscillo).Add("oscilloIn", new Point(12, 12), Color.Pink);
+
 
             var t = new TestGraph();
             t.Location = new Point(200, 200);
             this.Controls.Add(t);
             Adorn(t);
 
-            Shapes.Add(new Quadrilatere());
-            Shapes.Add(new Figure());
         }
         protected override void OnResize(EventArgs e)
         {
             buffer.Resize(Size);
             base.OnResize(e);
-        }
-
-        protected override void OnPaint(PaintEventArgs e)
-        {
-            buffer.Draw((gr) =>
-            {
-                gr.Clear(Color.Transparent);
-                foreach (var sh in Shapes)
-                {
-                    sh.Draw(gr);
-                }
-            });
-
-            //var copy = buffer.Copy();
-            //e.Graphics.DrawImageUnscaled(copy,0,0);
-
-            //e.Graphics.DrawImageUnscaled(copy, e.ClipRectangle.X, e.ClipRectangle.Y, e.ClipRectangle.Width, e.ClipRectangle.Height);
-
-            // buffer.FlushTo(e.Graphics);
-            base.OnPaint(e);
-
-            e.Graphics.SetClip(Shapes.Bounds);
-            buffer.FlushTo(e.Graphics);
         }
     }
 }

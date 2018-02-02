@@ -11,7 +11,7 @@ using X.Editor.Model;
 namespace X.Editor.Controls.Utils
 {
     public partial class X { }
-    public abstract class AdornerBase : Control
+    public abstract class AdornerBase : UserControl
     {
         protected Surface Surface { get; private set; }
         protected Control Target { get; private set; }

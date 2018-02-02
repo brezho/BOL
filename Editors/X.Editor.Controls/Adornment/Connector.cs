@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Helpers;
 using System.Linq;
 using System.Windows.Forms;
 using X.Editor.Controls.Gdi;
@@ -9,6 +10,7 @@ using X.Editor.Controls.Utils;
 
 namespace X.Editor.Controls.Adornment
 {
+
     partial class X { }
     public class Connector : AdornerBase
     {
@@ -22,11 +24,12 @@ namespace X.Editor.Controls.Adornment
             this.MakeLocationRelativeTo(target, 0, 0);
         }
 
-        public void Add(string connectorName, Point point, Color color)
+        public ConnectionPoint Add(string connectorName, Point location, Color color)
         {
-            var connector = new ConnectionPoint(Surface, Target, connectorName, point, color);
-            _points.Add(connector);
-            Surface.Adorn(Target, connector);
+            var point = new ConnectionPoint(Surface, Target, connectorName, location, color);
+            _points.Add(point);
+            Surface.Adorn(Target, point);
+            return point;
         }
     }
 
@@ -56,6 +59,9 @@ namespace X.Editor.Controls.Adornment
         protected override int ZIndex => 100;
         Color _color = Color.White;
         GraphicsBuffer _buffer;
+
+        public new Control Target { get { return base.Target; } }
+
         public ConnectionPoint(Surface surface, Control target, string name, Point location, Color color) : base(surface, target)
         {
             Name = name;
@@ -112,6 +118,13 @@ namespace X.Editor.Controls.Adornment
             base.OnMouseUp(e);
         }
 
+        protected override void OnMouseHover(EventArgs e)
+        {
+            var t = new ToolTip();
+            t.Show(Name, this);
+            base.OnMouseHover(e);
+        }
+
         protected override void OnMouseMove(MouseEventArgs e)
         {
             if (isDragging)
@@ -142,7 +155,32 @@ namespace X.Editor.Controls.Adornment
             _buffer.FlushTo(e.Graphics);
             base.OnPaint(e);
         }
+
+        public event EventHandler<ConnectionEventArgs> ConnectedTo;
+        public event EventHandler<ConnectionEventArgs> ConnectedFrom;
+        internal void OnConnectedTo(ConnectionPoint destination)
+        {
+            EventsHelper.Fire(ConnectedTo, this, new ConnectionEventArgs(this, destination));
+        }
+
+        internal void OnConnectedFrom(ConnectionPoint source)
+        {
+            EventsHelper.Fire(ConnectedFrom, this, new ConnectionEventArgs(source, this));
+        }
     }
+
+    public class ConnectionEventArgs:EventArgs
+    {
+        public ConnectionPoint Source { get; }
+        public ConnectionPoint Destination { get; }
+        public ConnectionEventArgs(ConnectionPoint source, ConnectionPoint destination)
+        {
+            Source = source;
+            Destination = destination;
+        }
+
+    }
+    
 
     public class Connection : AdornerBase
     {
@@ -189,6 +227,9 @@ namespace X.Editor.Controls.Adornment
             {
                 AdjustSizeAndPosition();
             };
+
+            Source.OnConnectedTo(destination);
+            Destination.OnConnectedFrom(Source);
         }
 
         internal void SetEndpointDelta(Point delta)

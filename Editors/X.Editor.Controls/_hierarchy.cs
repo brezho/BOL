@@ -84,7 +84,12 @@ namespace X.Editor.Controls
             this.Controls.Add(knob);
             Adorn(knob);
 
-            Adorn<Connector>(knob).Add("knobOut", new Point(12, 12), Color.SkyBlue);
+            var knobOut = Adorn<Connector>(knob).Add("knobOut", new Point(12, 12), Color.SkyBlue);
+
+            knobOut.ConnectedTo += (s, a) =>
+            {
+                Log(a.Source.Name + " connected to ", a.Destination.Name);
+            };
 
 
             var oscillo = new Oscilloscope();
@@ -92,8 +97,17 @@ namespace X.Editor.Controls
             this.Controls.Add(oscillo);
             Adorn(oscillo);
 
-             Adorn<Connector>(oscillo).Add("oscilloIn", new Point(12, 12), Color.Pink);
+            var oscilloIn = Adorn<Connector>(oscillo).Add("oscilloIn", new Point(12, 12), Color.Pink);
 
+            oscilloIn.ConnectedFrom += (s, a) =>
+            {
+                var remoteKnob = (KnobControl)a.Source.Target;
+                remoteKnob.OnNext += (rs, ra) =>
+                {
+                    oscillo.Add(ra);
+                };
+
+            };
 
             var t = new TestGraph();
             t.Location = new Point(200, 200);
@@ -101,6 +115,8 @@ namespace X.Editor.Controls
             Adorn(t);
 
         }
+
+
         protected override void OnResize(EventArgs e)
         {
             buffer.Resize(Size);

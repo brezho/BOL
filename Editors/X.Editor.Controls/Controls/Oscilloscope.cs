@@ -21,21 +21,21 @@ namespace X.Editor.Controls.Controls
         public Oscilloscope() : base()
         {
             Size = new System.Drawing.Size(300, 200);
+            Compute();
+            //var rnd = new Random();
+            //for (int i = 0; i < 500; i++)
+            //{
+            //    points.Add(rnd.Next(0, 200));
+            //}
 
-            var rnd = new Random();
-            for (int i = 0; i < 500; i++)
-            {
-                points.Add(rnd.Next(0, 200));
-            }
-
-            Task.Factory.StartNew(() =>
-            {
-                while (true)
-                {
-                    Add(rnd.Next(0, 150));
-                    Thread.Sleep(2);
-                }
-            });
+            //Task.Factory.StartNew(() =>
+            //{
+            //    while (true)
+            //    {
+            //        Add(rnd.Next(0, 150));
+            //        Thread.Sleep(2);
+            //    }
+            //});
 
         }
 

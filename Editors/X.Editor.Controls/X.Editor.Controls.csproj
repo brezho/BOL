@@ -133,6 +133,8 @@
     <Compile Include="Adornment\Debugger.cs" />
     <Compile Include="Adornment\Positioner.cs" />
     <Compile Include="Adornment\Resizer.cs" />
+    <Compile Include="Controls\Digit.cs" />
+    <Compile Include="Controls\Digit2.cs" />
     <Compile Include="Controls\KnobControl.cs" />
     <Compile Include="Controls\Oscilloscope.cs" />
     <Compile Include="Controls\TestGraph.cs" />

@@ -130,7 +130,7 @@ namespace X.Editor.Controls.Utils
                     size = size.Grow(-dw, 0);
                     break;
                 case KnownPoint.Center:
-                    loc = loc.Translate(dw / 2, dh / 2);
+                    loc = loc.Translate(-dw / 2, -dh / 2);
                     size = size.Grow(dw, dh);
                     break;
             }

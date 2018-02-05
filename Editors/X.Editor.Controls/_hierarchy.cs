@@ -114,6 +114,22 @@ namespace X.Editor.Controls
             this.Controls.Add(t);
             Adorn(t);
 
+            var multi = new MultiDigits(5);
+            multi.Location = new Point(120, 120);
+            this.Controls.Add(multi);
+            Adorn(multi);
+            var multiIn = Adorn<Connector>(multi).Add("multiIn", new Point(12, 12), Color.Pink);
+
+            multiIn.ConnectedFrom += (s, a) =>
+            {
+                var remoteKnob = (KnobControl)a.Source.Target;
+                remoteKnob.OnNext += (rs, ra) =>
+                {
+                    multi.Value = ra;
+                };
+
+            };
+
         }
 
 

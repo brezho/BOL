@@ -160,12 +160,12 @@ namespace X.Editor.Controls.Adornment
         public event EventHandler<ConnectionEventArgs> ConnectedFrom;
         internal void OnConnectedTo(ConnectionPoint destination)
         {
-            EventsHelper.Fire(ConnectedTo, this, new ConnectionEventArgs(this, destination));
+            if (ConnectedTo != null) ConnectedTo(this, new ConnectionEventArgs(this, destination));
         }
 
         internal void OnConnectedFrom(ConnectionPoint source)
         {
-            EventsHelper.Fire(ConnectedFrom, this, new ConnectionEventArgs(source, this));
+            if (ConnectedFrom != null) ConnectedFrom(this, new ConnectionEventArgs(source, this));
         }
     }
 

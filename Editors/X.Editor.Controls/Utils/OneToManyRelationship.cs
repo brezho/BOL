@@ -37,7 +37,6 @@ namespace X.Editor.Controls.Utils
 
             return result;
         }
-
         public TSource[] Sources { get { return _relationship.Keys.ToArray() ?? Array.Empty<TSource>(); } }
         public TTarget[] Targets { get { return _reversedRelationship.Keys.ToArray() ?? Array.Empty<TTarget>(); } }
 

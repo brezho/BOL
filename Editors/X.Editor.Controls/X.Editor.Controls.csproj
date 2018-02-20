@@ -125,7 +125,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="X.System, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\X.System.1.0.0-r586\lib\netstandard2.0\X.System.dll</HintPath>
+      <HintPath>..\..\packages\X.System.1.0.0-r7038\lib\netstandard2.0\X.System.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

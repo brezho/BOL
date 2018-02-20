@@ -6,8 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="X.Application" Version="1.0.0-r586" />
-    <PackageReference Include="X.Web" Version="1.0.0-r586" />
+    <PackageReference Include="X.Application" Version="1.0.0-r7038" />
+    <PackageReference Include="X.Web" Version="1.0.0-r7038" />
   </ItemGroup>
 
 </Project>

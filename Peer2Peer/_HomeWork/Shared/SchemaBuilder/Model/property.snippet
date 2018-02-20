@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets
+    xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Create a Bonobo property</Title>
+      <Shortcut>bnp</Shortcut>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>Property type</ToolTip>
+          <Default>string</Default>
+        </Literal>
+        <Literal>
+          <ID>name</ID>
+          <ToolTip>Property name</ToolTip>
+          <Default>Name</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+          [XmlAttribute]
+          public $type$ $name$ { get { return Get(() => $name$); } set { Set(() => $name$, value); } }
+]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Create a Bonobo list</Title>
+      <Shortcut>bnl</Shortcut>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>type</ID>
+          <ToolTip>List item type</ToolTip>
+          <Default>string</Default>
+        </Literal>
+        <Literal>
+          <ID>name</ID>
+          <ToolTip>Property name</ToolTip>
+          <Default>Name</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp">
+        <![CDATA[
+          public Pack<$type$> $name$ { get { return Get(() => $name$); } set { Set(() => $name$, value); } }
+ ]]>
+      </Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0-preview1-25914-04" />
-    <PackageReference Include="X.System" Version="1.0.0-r586" />
+    <PackageReference Include="X.System" Version="1.0.0-r7038" />
   </ItemGroup>
 
 </Project>

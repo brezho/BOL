@@ -1,0 +1,7 @@
+
+FileName: "C:\Workspaces\_HomeWork\TrebAdmin\CodeGen.FromM2ToM1\bin\Debug\CodeGen.FromM2ToM1.exe"
+Arguments: "C:\Workspaces\_HomeWork\Attempts\PieceOfWork\SaveMe.xml"
+The system cannot find the file specified
+   at System.Diagnostics.Process.StartWithCreateProcess(ProcessStartInfo startInfo)
+   at System.Diagnostics.Process.Start()
+   at CT.CodeGenerationSite.GenerateCode(String inputFileName, String inputFileContent) in c:\TFS\Bagad\DevelopmentTools\CT\CodeGenerationSite.cs:line 103

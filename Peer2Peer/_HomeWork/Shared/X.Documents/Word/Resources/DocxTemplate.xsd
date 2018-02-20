@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns="urn:sgsXdoc" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:sgsXdoc" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+  <xs:complexType name="Label" mixed="true" />
+  <xs:element name="Label" type="Label" />
+
+  <xs:complexType name="Field" mixed="true" />
+  <xs:element name="Field" type="Field" />
+
+  <xs:element name="Picture" type="Picture" />
+    <xs:complexType name="Picture" mixed="true" >
+        <xs:attribute name="PictureNo" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>
+                    The no of the Picture Added as string. First inserted image to doc template should be 1 and so on.
+                </xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>  
+    
+  <xs:complexType name="ForEach" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="DataSource" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          Name of the DataSource used to loop through the ForEach. NB: This attribut is required and must exists in the DataSource collection!
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:element name="ForEach" type="ForEach" />
+
+  <xs:complexType name="If" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Condition" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the boolean field to check in the KeyValuePair collection.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:element name="If" type="If" />
+
+  <xs:complexType name="IfNot" mixed="true">
+    <xs:sequence>
+      <xs:any minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="Condition" type="xs:string" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          The name of the boolean field to check in the KeyValuePair collection.
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
+  <xs:element name="IfNot" type="IfNot" />
+
+</xs:schema>

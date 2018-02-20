@@ -8,6 +8,7 @@ using X.Editor.Model;
 
 namespace X.Editor.Documents
 {
+    partial class X { }
     public class DocumentWindowBase : DockContent, IEditorContainer
     {
         public IEditorShell Shell { get; private set; }

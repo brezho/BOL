@@ -13,6 +13,7 @@ using X.Editor.Tools.Explorer;
 using X.Editor.Tools.Output;
 using X.Editor.Tools.PropertyGrid;
 using X.Editor.Model;
+using System.Helpers;
 
 namespace X.Editor
 {
@@ -32,6 +33,7 @@ namespace X.Editor
                 if (value != _hierarchy)
                 {
                     _hierarchy = value;
+                  //  EventsHelper.Fire(HierarchyChanged, this, new HirarchyChangedEventArgs(value));
                     if (HierarchyChanged != null) HierarchyChanged(this, new HirarchyChangedEventArgs(value));
                 }
             }
@@ -57,7 +59,7 @@ namespace X.Editor
         OutputTool output;
         PropertyGridTool propertyGrid;
 
-        public Main(params string[] args)
+        public Main(IHierarchyProvider hierarchyProvider, params string[] args)
         {
             InitializeComponent();
 
@@ -68,7 +70,6 @@ namespace X.Editor
             output = new OutputTool(this);
             propertyGrid = new PropertyGridTool(this);
 
-            var hierarchyProvider = Config.GetProvider(args);
             Hierarchy = hierarchyProvider.CreateHierarchy(this);
             var startingNode = Hierarchy.Nodes().FirstOrDefault();
 

@@ -7,6 +7,7 @@ using System.Windows.Forms;
 
 namespace X.Editor.Tools.Output
 {
+    partial class X { }
     public class OutputTool : ToolWindowBase
     {
         TextBox OutBox;

@@ -12,6 +12,7 @@ using X.Editor.Model;
 
 namespace X.Editor.Tools.Commander
 {
+    partial class X { }
     class CommanderTool : ToolWindowBase
     {
         TextBox InputBox;

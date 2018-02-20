@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<License>
+  <Data>
+    <LicensedTo>SGS</LicensedTo>
+    <LicenseType>Developer Enterprise Subscription</LicenseType>
+    <LicenseNote>Limited to 1 developer.</LicenseNote>
+    <OrderID>101124065620</OrderID>
+    <OEM>This is not a non-redistributable license</OEM>
+    <Products>
+      <Product>Aspose.Total</Product>
+    </Products>
+    <EditionType>Enterprise</EditionType>
+    <SerialNumber>30de211a-24c0-48e9-b821-172c95ad0dc9</SerialNumber>
+    <SubscriptionExpiry>20111124</SubscriptionExpiry>
+    <LicenseVersion>2.2</LicenseVersion>
+  </Data>
+  <Signature>CH42/ptr79KQWGc9GKIUT9hVtQLwIpxDbHFqeriiq1KE4C5FtPy8hxSsZ87cbfBLdI/fE1G5r3Ss0zmuRiNhVRiLUm+9lqIXjYG9nI5fjOoPq2vo/YVPR8rAhsBqhKL1d+KFuX/iKSdHXTeX8H9IFkS/sNPKzAkvCzROvd1R3Bo=</Signature>
+</License>

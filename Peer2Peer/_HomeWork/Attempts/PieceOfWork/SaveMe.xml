@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<CodeGenerationDirectives>
+  <Run Command="C:\Workspaces\_HomeWork\TrebAdmin\CodeGen.FromM2ToM1\bin\Debug\CodeGen.FromM2ToM1.exe"
+       Args="{0}"
+       BuildAction="Compile" />
+</CodeGenerationDirectives>
+
+
+

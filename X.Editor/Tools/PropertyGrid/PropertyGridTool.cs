@@ -8,6 +8,7 @@ using X.Editor.Model;
 
 namespace X.Editor.Tools.PropertyGrid
 {
+    partial class X { }
     public class PropertyGridTool : ToolWindowBase
     {
         System.Windows.Forms.PropertyGrid Grid;

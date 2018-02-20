@@ -6,8 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using X.Editor.Model;
 
-namespace X.Editor.Model
+namespace X.Editor
 {
     public static class Config
     {

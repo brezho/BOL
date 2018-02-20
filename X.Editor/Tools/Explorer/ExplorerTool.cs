@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
@@ -10,13 +11,15 @@ using X.Editor.Model;
 
 namespace X.Editor.Tools.Explorer
 {
+    partial class X { }
     public class ExplorerTool : ToolWindowBase
     {
         TreeView treeControl;
-
+        SynchronizationContext context;
         public ExplorerTool(Main main)
             : base(main)
         {
+            context = SynchronizationContext.Current;
             Text = "Explorer";
             treeControl = new TreeView();
             treeControl.HideSelection = false;
@@ -24,19 +27,35 @@ namespace X.Editor.Tools.Explorer
             treeControl.Font = Main.Consolas975;
             Controls.Add(treeControl);
 
-            main.HierarchyChanged += (sender, hierachyArgs) =>
+            main.HierarchyChanged += (s, a) =>
             {
-                treeControl.Nodes.Clear();
-                foreach (var it in main.Hierarchy.Descendants()) BindEditorItemToNode(it);
-                main.Hierarchy.DescendantAdded += (ias, iaa) => BindEditorItemToNode(iaa);
-                main.Hierarchy.DescendantRemoved += (ias, iaa) => UnbindEditorItemToNode(iaa);
-
-                main.Hierarchy.SelectedNodeChanged += (sncs, snca) =>
+                context.Post(st =>
                 {
-                    var tn = FindTreeNode(snca.Id);
-                    if (tn != null) treeControl.SelectedNode = tn;
-                };
+                    treeControl.Nodes.Clear();
+                    foreach (var it in main.Hierarchy.Descendants()) BindEditorItemToNode(it);
+
+                    main.Hierarchy.DescendantAdded += (ias, iaa) =>
+                    {
+                        context.Post(st2 => BindEditorItemToNode(iaa), null);
+                    };
+                    main.Hierarchy.DescendantRemoved += (ias, iaa) =>
+                    {
+                        context.Post(st2 => UnbindEditorItemToNode(iaa), null);
+                    };
+
+                    main.Hierarchy.SelectedNodeChanged += (sncs, snca) =>
+                    {
+                        context.Post(st2 =>
+                            {
+                                var tn = FindTreeNode(snca.Id);
+                                if (tn != null) treeControl.SelectedNode = tn;
+                            }, null);
+                    };
+
+
+                }, null);
             };
+
 
             treeControl.AfterSelect += (s, a) =>
             {
@@ -67,10 +86,10 @@ namespace X.Editor.Tools.Explorer
             {
                 var parentNode = FindTreeNode(it.Parent.Id);
                 var addTo = (parentNode == null) ? treeControl.Nodes : parentNode.Nodes;
-                var newNode = addTo.Add(it.Id.ToString(), it.NodeDataAdapter.GetDisplayName());
-                it.Changed += it_Changed;
-                newNode.Tag = it;
 
+                TreeNode newNode = addTo.Add(it.Id.ToString(), it.NodeDataAdapter.GetDisplayName());
+                newNode.Tag = it;
+                it.Changed += it_Changed;
 
                 if (it.Commands.Count > 0)
                 {
@@ -104,7 +123,7 @@ namespace X.Editor.Tools.Explorer
             {
                 var menu = treenode.ContextMenu.MenuItems.Find(e.Item.Text, false).FirstOrDefault();
                 if (menu != null) treenode.ContextMenu.MenuItems.Remove(menu);
-            } 
+            }
 
         }
 

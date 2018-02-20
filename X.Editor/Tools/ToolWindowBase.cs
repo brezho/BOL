@@ -8,6 +8,7 @@ using X.Editor.Model;
 
 namespace X.Editor.Tools
 {
+    partial class X { }
     public abstract class ToolWindowBase : DockContent
     {
         public IEditorShell Shell { get; private set; }

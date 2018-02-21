@@ -19,14 +19,15 @@ namespace X.Editor.Tools.Output
             OutBox.Multiline = true;
             OutBox.Dock = DockStyle.Fill;
             OutBox.ScrollBars = ScrollBars.Vertical;
-            
+            OutBox.ReadOnly = true;
+
             Controls.Add(OutBox);
             main.Commands.Add("OUT-Clear", () => { OutBox.Text = ""; }, "Clear the output window");
         }
 
         public void Write(string text)
         {
-            OutBox.AppendText(text);
+            UpdateUI(() => OutBox.AppendText(text));
         }
     }
 }

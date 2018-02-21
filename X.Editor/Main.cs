@@ -14,6 +14,7 @@ using X.Editor.Tools.Output;
 using X.Editor.Tools.PropertyGrid;
 using X.Editor.Model;
 using System.Helpers;
+using X.Editor.Tools;
 
 namespace X.Editor
 {
@@ -58,6 +59,7 @@ namespace X.Editor
         CommanderTool commander;
         OutputTool output;
         PropertyGridTool propertyGrid;
+        ImmediateTool immediate;
 
         public Main(IHierarchyProvider hierarchyProvider, params string[] args)
         {
@@ -69,6 +71,7 @@ namespace X.Editor
             commander = new CommanderTool(this);
             output = new OutputTool(this);
             propertyGrid = new PropertyGridTool(this);
+            immediate = new ImmediateTool(this);
 
             Hierarchy = hierarchyProvider.CreateHierarchy(this);
             var startingNode = Hierarchy.Nodes().FirstOrDefault();
@@ -95,6 +98,7 @@ namespace X.Editor
             explorer.Show(DockPanel, DockState.DockLeft);
             propertyGrid.Show(DockPanel, DockState.DockRight);
             output.Show(DockPanel, DockState.DockBottom);
+            immediate.Show(DockPanel, DockState.DockBottom);
 
             if (startingNode != null)
             {

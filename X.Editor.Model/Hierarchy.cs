@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace X.Editor.Model
 {
+    public class InterpretationResult
+    {
+        public Exception Exception { get; set; }
+        public string Result { get; set; }
+    }
+    public delegate InterpretationResult Interpreter(string commandText);
     public abstract class Hierarchy : HierarchyNode
     {
         public event EventHandler<HierarchyNode> SelectedNodeChanged;
         public event EventHandler<HierarchyNode> ActivationRequested;
+        protected Interpreter Interpreter { get; set; }
 
         HierarchyNode _selectedNode;
         public HierarchyNode SelectedNode
@@ -39,12 +46,33 @@ namespace X.Editor.Model
         {
             if (ActivationRequested != null) ActivationRequested(this, item);
         }
+        public InterpretationResult InterpretCommand(string commandText)
+        {
+            return OnInterpretCommand(commandText);
+        }
+
+        protected virtual InterpretationResult OnInterpretCommand(string commandText)
+        {
+            if (Interpreter != null)
+            {
+                try
+                {
+                    return Interpreter(commandText);
+                }
+                catch (Exception x)
+                {
+                    return new InterpretationResult { Exception = x, Result = "Interpreter threw an exception" };
+                }
+            }
+            return new InterpretationResult { Result = "No command interpreter defined in hierarchy" };
+        }
+
 
         public override bool HandleUserInput(UserInput input)
         {
             if (SelectedNode != null)
             {
-                var ancestors = SelectedNode.AncestorsAndSelf().Where(x=>x!=this).ToArray();
+                var ancestors = SelectedNode.AncestorsAndSelf().Where(x => x != this).ToArray();
                 foreach (var node in ancestors)
                 {
                     if (node.HandleUserInput(input)) return true;

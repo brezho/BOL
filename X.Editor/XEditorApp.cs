@@ -10,8 +10,13 @@ using X.Editor.Model;
 
 namespace X.Application
 {
-    public abstract class XEditorApp : XApp
+    public class XEditorApp : XApp
     {
+        [STAThread]
+        static void Main(string[] args)
+        {
+            Bootstrapper<XEditorApp>.Run(args);
+        }
         protected override sealed void OnInitialize(params string[] args)
         {
             base.OnInitialize(args);

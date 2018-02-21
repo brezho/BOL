@@ -22,12 +22,11 @@ namespace X.Editor.Tools.PropertyGrid
 
             main.HierarchyChanged += (snd, args) =>
             {
-
                 main.Hierarchy.SelectedNodeChanged += (s, a) =>
                 {
                     var current = Grid.SelectedObject as HierarchyNode;
                     if (current != null) current.PropertyChanged -= Item_PropertyChanged;
-                    Grid.SelectedObject = a;
+                    UpdateUI(() => Grid.SelectedObject = a);
                     a.PropertyChanged += Item_PropertyChanged;
                 };
             };
@@ -35,7 +34,7 @@ namespace X.Editor.Tools.PropertyGrid
 
         void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            Grid.Refresh();
+            UpdateUI(() => Grid.Refresh());
         }
     }
 }

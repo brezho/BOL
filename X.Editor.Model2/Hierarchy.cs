@@ -10,5 +10,35 @@ namespace X.Editor.Model2
 
     public class Hierarchy : HierarchyEntry
     {
+        public event EventHandler<ItemEventArgs> SelectedEntryChanged;
+        public event EventHandler<ItemEventArgs> EntryActivated;
+        public HierarchyEntry SelectedEntry { get; private set; }
+        internal override Hierarchy InternalRoot { get { return this; } }
+
+        protected Hierarchy()
+        {
+        }
+
+        public void Select(HierarchyEntry entry)
+        {
+            if (SelectedEntry != entry)
+            {
+                SelectedEntry = entry;
+                OnSelectedEntryChanged(new ItemEventArgs(entry));
+            }
+        }
+        public void Activate(HierarchyEntry entry)
+        {
+            OnEntryActivated(new ItemEventArgs(entry));
+        }
+
+        protected virtual void OnSelectedEntryChanged(ItemEventArgs itemEventArgs)
+        {
+            if (SelectedEntryChanged != null) SelectedEntryChanged(this, itemEventArgs);
+        }
+        protected virtual void OnEntryActivated(ItemEventArgs itemEventArgs)
+        {
+            if (EntryActivated != null) EntryActivated(this, itemEventArgs);
+        }
     }
 }

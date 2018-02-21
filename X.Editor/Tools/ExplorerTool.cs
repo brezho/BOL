@@ -15,11 +15,9 @@ namespace X.Editor.Tools.Explorer
     public class ExplorerTool : ToolWindowBase
     {
         TreeView treeControl;
-        SynchronizationContext context;
         public ExplorerTool(Main main)
             : base(main)
         {
-            context = SynchronizationContext.Current;
             Text = "Explorer";
             treeControl = new TreeView();
             treeControl.HideSelection = false;
@@ -29,31 +27,31 @@ namespace X.Editor.Tools.Explorer
 
             main.HierarchyChanged += (s, a) =>
             {
-                context.Post(st =>
+                UpdateUI(() =>
                 {
                     treeControl.Nodes.Clear();
                     foreach (var it in main.Hierarchy.Descendants()) BindEditorItemToNode(it);
 
                     main.Hierarchy.DescendantAdded += (ias, iaa) =>
                     {
-                        context.Post(st2 => BindEditorItemToNode(iaa), null);
+                        UpdateUI(() => BindEditorItemToNode(iaa));
                     };
                     main.Hierarchy.DescendantRemoved += (ias, iaa) =>
                     {
-                        context.Post(st2 => UnbindEditorItemToNode(iaa), null);
+                        UpdateUI(() => UnbindEditorItemToNode(iaa));
                     };
 
                     main.Hierarchy.SelectedNodeChanged += (sncs, snca) =>
                     {
-                        context.Post(st2 =>
+                        UpdateUI(() =>
                             {
                                 var tn = FindTreeNode(snca.Id);
                                 if (tn != null) treeControl.SelectedNode = tn;
-                            }, null);
+                            });
                     };
 
 
-                }, null);
+                });
             };
 
 
@@ -102,7 +100,8 @@ namespace X.Editor.Tools.Explorer
                 it.Commands.ItemAdded += Commands_ItemAdded;
                 it.Commands.ItemRemoved += Commands_ItemRemoved;
 
-                foreach (var child in it.Nodes())
+                var curChildren = it.Nodes().ToArray();
+                foreach (var child in curChildren)
                 {
                     BindEditorItemToNode(child);
                 }
